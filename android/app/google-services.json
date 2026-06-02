@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1055525036473",
+    "project_id": "lingua-ai-8be27",
+    "storage_bucket": "lingua-ai-8be27.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055525036473:android:067cad3371ed6bb1a1d668",
+        "android_client_info": {
+          "package_name": "com.example.lingua_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyA-bhJeHUUdlC4n6shqLrTZGR8S9d_r8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
