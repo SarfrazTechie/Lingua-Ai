@@ -19,121 +19,144 @@ class LanguageSelector extends StatelessWidget {
   });
 
   void _showPicker(BuildContext context, bool isSource) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.bgDark2,
+      backgroundColor: isDark ? AppColors.bgDark2 : AppColors.cardLight,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => ListView.builder(
-        itemCount: SupportedLanguages.all.length,
-        itemBuilder: (_, i) {
-          final lang = SupportedLanguages.all[i];
-          return ListTile(
-            leading: Text(lang.flag, style: const TextStyle(fontSize: 24)),
-            title: Text(lang.name,
-                style: AppTextStyles.body2
-                    .copyWith(color: AppColors.textDarkPrimary)),
-            subtitle: Text(lang.nativeName,
-                style: AppTextStyles.caption
-                    .copyWith(color: AppColors.textDarkSecondary)),
-            onTap: () {
-              isSource
-                  ? onSourceChanged(lang.code)
-                  : onTargetChanged(lang.code);
-              Navigator.pop(context);
-            },
-          );
-        },
+      builder: (_) => Column(
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            width: 40, height: 4,
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.textDarkTertiary : AppColors.textLightTertiary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text('Select Language',
+              style: AppTextStyles.headline3.copyWith(
+                color: isDark ? AppColors.textDarkPrimary : AppColors.textLightPrimary,
+              )),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: SupportedLanguages.all.length,
+              itemBuilder: (_, i) {
+                final lang = SupportedLanguages.all[i];
+                return ListTile(
+                  leading: Text(lang.flag, style: const TextStyle(fontSize: 24)),
+                  title: Text(lang.name,
+                    style: AppTextStyles.body2.copyWith(
+                      color: isDark ? AppColors.textDarkPrimary : AppColors.textLightPrimary,
+                      fontWeight: FontWeight.w500,
+                    )),
+                  subtitle: Text(lang.nativeName,
+                    style: AppTextStyles.caption.copyWith(
+                      color: isDark ? AppColors.textDarkSecondary : AppColors.textLightSecondary,
+                    )),
+                  onTap: () {
+                    isSource ? onSourceChanged(lang.code) : onTargetChanged(lang.code);
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final source = SupportedLanguages.findByCode(sourceLang);
     final target = SupportedLanguages.findByCode(targetLang);
 
+    final cardColor = isDark ? AppColors.cardDark : AppColors.cardLight;
+    final borderColor = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
+    final chipColor = isDark ? AppColors.bgDark3 : AppColors.cardLight2;
+    final textColor = isDark ? AppColors.textDarkPrimary : AppColors.textLightPrimary;
+    final subTextColor = isDark ? AppColors.textDarkSecondary : AppColors.textLightSecondary;
+
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sm),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
+        color: cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.glassBorder),
+        border: Border.all(color: borderColor),
+        boxShadow: isDark ? [] : AppShadows.card,
       ),
       child: Row(
         children: [
-          // Source
           Expanded(
             child: GestureDetector(
               onTap: () => _showPicker(context, true),
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppColors.glassDark,
+                  color: chipColor,
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: Row(
                   children: [
-                    Text(source.flag,
-                        style: const TextStyle(fontSize: 20)),
+                    Text(source.flag, style: const TextStyle(fontSize: 20)),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(source.name,
-                          style: AppTextStyles.body2.copyWith(
-                              color: AppColors.textDarkPrimary,
-                              fontWeight: FontWeight.w600)),
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body2.copyWith(
+                          color: textColor,
+                          fontWeight: FontWeight.w600,
+                        )),
                     ),
-                    const Icon(Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.textDarkSecondary, size: 18),
+                    Icon(Icons.keyboard_arrow_down_rounded, color: subTextColor, size: 18),
                   ],
                 ),
               ),
             ),
           ),
-
-          // Swap button
           GestureDetector(
             onTap: onSwap,
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
-              width: 36,
-              height: 36,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.15),
+                color: AppColors.primary,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                boxShadow: AppShadows.button,
               ),
-              child: const Icon(Icons.swap_horiz_rounded,
-                  color: AppColors.primary, size: 20),
+              child: const Icon(Icons.swap_horiz_rounded, color: Colors.white, size: 20),
             ),
           ),
-
-          // Target
           Expanded(
             child: GestureDetector(
               onTap: () => _showPicker(context, false),
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppColors.glassDark,
+                  color: chipColor,
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: Row(
                   children: [
-                    Text(target.flag,
-                        style: const TextStyle(fontSize: 20)),
+                    Text(target.flag, style: const TextStyle(fontSize: 20)),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(target.name,
-                          style: AppTextStyles.body2.copyWith(
-                              color: AppColors.textDarkPrimary,
-                              fontWeight: FontWeight.w600)),
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body2.copyWith(
+                          color: textColor,
+                          fontWeight: FontWeight.w600,
+                        )),
                     ),
-                    const Icon(Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.textDarkSecondary, size: 18),
+                    Icon(Icons.keyboard_arrow_down_rounded, color: subTextColor, size: 18),
                   ],
                 ),
               ),

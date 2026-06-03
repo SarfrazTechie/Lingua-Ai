@@ -1,40 +1,33 @@
 ﻿import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
-const FREE_DAILY_LIMIT = 20;
-const PREMIUM_DAILY_LIMIT = 500;
-const GUEST_DAILY_LIMIT = 5;
+const DAILY_LIMITS: Record<string, number> = {
+  guest: 5,
+  free: 20,
+  premium: 500,
+};
 
 export async function checkLimit(uid: string): Promise<void> {
-  const admin = await import("firebase-admin");
   const today = new Date().toISOString().split("T")[0];
 
-  // Get user subscription status
-  const userDoc = await admin.default
-    .firestore()
-    .doc(`users/${uid}`)
-    .get();
+  const userDoc = await admin.firestore().doc(`users/${uid}`).get();
+  const isPremium = userDoc.data()?.isPremium ?? false;
+  const isGuest = userDoc.data()?.isGuest ?? false;
 
-  const isPremium = userDoc.data()?.isPremium || false;
-  const isGuest = userDoc.data()?.isGuest || false;
+  const plan = isPremium ? "premium" : isGuest ? "guest" : "free";
+  const limit = DAILY_LIMITS[plan];
 
-  const limit = isPremium
-    ? PREMIUM_DAILY_LIMIT
-    : isGuest
-    ? GUEST_DAILY_LIMIT
-    : FREE_DAILY_LIMIT;
-
-  // Get today usage
-  const usageDoc = await admin.default
+  const usageDoc = await admin
     .firestore()
     .doc(`usage/${uid}/daily/${today}`)
     .get();
 
-  const messageCount = usageDoc.data()?.messageCount || 0;
+  const currentCount = usageDoc.data()?.messageCount ?? 0;
 
-  if (messageCount >= limit) {
+  if (currentCount >= limit) {
     throw new functions.https.HttpsError(
       "resource-exhausted",
-      `Daily limit of ${limit} messages reached. Upgrade to Premium for more.`
+      `Daily limit of ${limit} messages reached.`
     );
   }
 }

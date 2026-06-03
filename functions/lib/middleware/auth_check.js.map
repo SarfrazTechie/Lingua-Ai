@@ -1,0 +1,1 @@
+{"version":3,"file":"auth_check.js","sourceRoot":"","sources":["../../src/middleware/auth_check.ts"],"names":[],"mappings":";;AAEA,gCAOC;AATD,gDAAgD;AAEhD,SAAgB,UAAU,CAAC,OAAwC;IACjE,IAAI,CAAC,OAAO,CAAC,IAAI,EAAE,CAAC;QAClB,MAAM,IAAI,SAAS,CAAC,KAAK,CAAC,UAAU,CAClC,iBAAiB,EACjB,4CAA4C,CAC7C,CAAC;IACJ,CAAC;AACH,CAAC"}

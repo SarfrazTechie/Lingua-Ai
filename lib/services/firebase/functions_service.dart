@@ -1,12 +1,8 @@
-﻿import '../../core/errors/app_exception.dart';
+﻿import 'package:cloud_functions/cloud_functions.dart';
+import '../../core/errors/app_exception.dart';
 
 class FunctionsService {
-  // Placeholder — Firebase Cloud Functions lagane ke baad implement hoga
-
-  Future<Map<String, dynamic>> call(
-      String functionName, Map<String, dynamic> data) async {
-    throw const NetworkException('Firebase Functions not configured yet');
-  }
+  final FirebaseFunctions _functions = FirebaseFunctions.instance;
 
   Future<String> translate({
     required String text,
@@ -14,9 +10,20 @@ class FunctionsService {
     required String targetLang,
     String? tone,
   }) async {
-    // Mock response for UI testing
-    await Future.delayed(const Duration(seconds: 1));
-    return 'Translation: $text';
+    try {
+      final callable = _functions.httpsCallable('translateText');
+      final result = await callable.call({
+        'text': text,
+        'sourceLang': sourceLang,
+        'targetLang': targetLang,
+        'tone': tone ?? 'neutral',
+      });
+      return result.data['translation'] as String? ?? '';
+    } on FirebaseFunctionsException catch (e) {
+      throw NetworkException(e.message ?? 'Translation failed');
+    } catch (e) {
+      throw NetworkException('Translation failed: $e');
+    }
   }
 
   Future<String> chat({
@@ -24,7 +31,18 @@ class FunctionsService {
     required List<Map<String, String>> history,
     String? mode,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return 'AI Response to: $message';
+    try {
+      final callable = _functions.httpsCallable('chatMessage');
+      final result = await callable.call({
+        'message': message,
+        'history': history,
+        'mode': mode ?? 'Travel Companion',
+      });
+      return result.data['reply'] as String? ?? '';
+    } on FirebaseFunctionsException catch (e) {
+      throw NetworkException(e.message ?? 'Chat failed');
+    } catch (e) {
+      throw NetworkException('Chat failed: $e');
+    }
   }
 }

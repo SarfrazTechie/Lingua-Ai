@@ -1,14 +1,5 @@
-﻿import * as functions from "firebase-functions";
-import { translateText } from "./translate";
-import { chatWithAI } from "./chat";
-import { voiceToText } from "./voice";
-import { checkUsage, incrementUsage, resetDailyUsage } from "./usage";
-
-export {
-  translateText,
-  chatWithAI,
-  voiceToText,
-  checkUsage,
-  incrementUsage,
-  resetDailyUsage,
-};
+﻿import * as admin from "firebase-admin";
+admin.initializeApp();
+export { translateText } from "./translate";
+export { chatMessage } from "./chat";
+export { resetDailyUsage } from "./usage";

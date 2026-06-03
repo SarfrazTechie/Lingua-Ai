@@ -18,67 +18,72 @@ class InputCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.cardDark : AppColors.cardLight;
+    final borderColor = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
+    final textColor = isDark ? AppColors.textDarkPrimary : AppColors.textLightPrimary;
+    final hintColor = isDark ? AppColors.textDarkTertiary : AppColors.textLightTertiary;
+    final iconBg = isDark ? AppColors.bgDark3 : AppColors.cardLight2;
+    final iconColor = isDark ? AppColors.textDarkSecondary : AppColors.textLightSecondary;
+
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
+        color: cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.glassBorder),
+        border: Border.all(color: borderColor),
+        boxShadow: isDark ? [] : AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: Text('English',
-                style: AppTextStyles.caption
-                    .copyWith(color: AppColors.primary, fontWeight: FontWeight.w600)),
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+            child: Text(
+              sourceLang.toUpperCase(),
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+              ),
+            ),
           ),
           TextField(
             controller: controller,
-            maxLines: 4,
+            maxLines: 5,
             maxLength: AppConstants.maxTranslationChars,
-            style: AppTextStyles.body1
-                .copyWith(color: AppColors.textDarkPrimary),
+            style: AppTextStyles.body1.copyWith(color: textColor, height: 1.6),
             decoration: InputDecoration(
               hintText: 'Enter text to translate...',
-              hintStyle: AppTextStyles.body1
-                  .copyWith(color: AppColors.textDarkSecondary.withOpacity(0.5)),
+              hintStyle: AppTextStyles.body1.copyWith(color: hintColor),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
-              counterStyle: AppTextStyles.caption
-                  .copyWith(color: AppColors.textDarkSecondary),
+              contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              counterStyle: AppTextStyles.caption.copyWith(color: iconColor),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
             child: Row(
               children: [
-                _ActionIcon(
-                    icon: Icons.mic_rounded,
-                    onTap: onVoice),
+                _ActionIcon(icon: Icons.mic_rounded, onTap: onVoice, bg: iconBg, color: iconColor),
                 const SizedBox(width: 8),
-                _ActionIcon(
-                    icon: Icons.volume_up_rounded,
-                    onTap: () {}),
+                _ActionIcon(icon: Icons.volume_up_rounded, onTap: () {}, bg: iconBg, color: iconColor),
                 const SizedBox(width: 8),
-                _ActionIcon(
-                    icon: Icons.camera_alt_rounded,
-                    onTap: () {}),
+                _ActionIcon(icon: Icons.camera_alt_rounded, onTap: () {}, bg: iconBg, color: iconColor),
                 const Spacer(),
                 GestureDetector(
                   onTap: onTranslate,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                     decoration: BoxDecoration(
                       gradient: AppGradients.primary,
                       borderRadius: BorderRadius.circular(AppRadius.full),
                       boxShadow: AppShadows.button,
                     ),
                     child: Text('Translate',
-                        style: AppTextStyles.caption.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700)),
+                      style: AppTextStyles.body2.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      )),
                   ),
                 ),
               ],
@@ -93,22 +98,23 @@ class InputCard extends StatelessWidget {
 class _ActionIcon extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final Color bg;
+  final Color color;
 
-  const _ActionIcon({required this.icon, required this.onTap});
+  const _ActionIcon({required this.icon, required this.onTap, required this.bg, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36,
-        height: 36,
+        width: 38,
+        height: 38,
         decoration: BoxDecoration(
-          color: AppColors.glassDark,
+          color: bg,
           borderRadius: BorderRadius.circular(AppRadius.sm),
-          border: Border.all(color: AppColors.glassBorder),
         ),
-        child: Icon(icon, color: AppColors.textDarkSecondary, size: 18),
+        child: Icon(icon, color: color, size: 18),
       ),
     );
   }

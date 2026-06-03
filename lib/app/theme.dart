@@ -1,44 +1,69 @@
 ﻿import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary            = Color(0xFF00C9A7);
-  static const Color primaryDark        = Color(0xFF00A886);
-  static const Color primaryLight       = Color(0xFF4DDBBC);
-  static const Color bgDark             = Color(0xFF0A0F0D);
-  static const Color bgDark2            = Color(0xFF111916);
-  static const Color bgDark3            = Color(0xFF1A2420);
-  static const Color bgLight            = Color(0xFFF4FAF8);
-  static const Color bgLight2           = Color(0xFFEAF5F1);
-  static const Color cardDark           = Color(0xFF162220);
-  static const Color cardLight          = Color(0xFFFFFFFF);
-  static const Color textDarkPrimary    = Color(0xFFE8F5F1);
-  static const Color textDarkSecondary  = Color(0xFF8AADA6);
-  static const Color textLightPrimary   = Color(0xFF0D1F1A);
-  static const Color textLightSecondary = Color(0xFF4A7066);
-  static const Color success            = Color(0xFF00C9A7);
-  static const Color error              = Color(0xFFFF5C5C);
-  static const Color warning            = Color(0xFFFFB347);
-  static const Color info               = Color(0xFF4DA6FF);
-  static const Color gold               = Color(0xFFFFD700);
-  static const Color goldLight          = Color(0xFFFFE566);
-  static const Color glassDark          = Color(0x1AFFFFFF);
-  static const Color glassLight         = Color(0x80FFFFFF);
-  static const Color glassBorder        = Color(0x26FFFFFF);
+  // Primary
+  static const Color primary        = Color(0xFF00C896);
+  static const Color primaryDark    = Color(0xFF00A87A);
+  static const Color primaryLight   = Color(0xFF4DD9B0);
+
+  // Dark mode backgrounds
+  static const Color bgDark         = Color(0xFF0D0D0D);
+  static const Color bgDark2        = Color(0xFF141414);
+  static const Color bgDark3        = Color(0xFF1A1A1A);
+  static const Color cardDark       = Color(0xFF1E1E1E);
+  static const Color cardDark2      = Color(0xFF242424);
+
+  // Light mode backgrounds
+  static const Color bgLight        = Color(0xFFF7F9F8);
+  static const Color bgLight2       = Color(0xFFEFF4F2);
+  static const Color cardLight      = Color(0xFFFFFFFF);
+  static const Color cardLight2     = Color(0xFFF2F7F5);
+
+  // Dark mode text
+  static const Color textDarkPrimary    = Color(0xFFFFFFFF);
+  static const Color textDarkSecondary  = Color(0xFF8A8A8A);
+  static const Color textDarkTertiary   = Color(0xFF555555);
+
+  // Light mode text
+  static const Color textLightPrimary   = Color(0xFF0D0D0D);
+  static const Color textLightSecondary = Color(0xFF6B7280);
+  static const Color textLightTertiary  = Color(0xFF9CA3AF);
+
+  // Status
+  static const Color success  = Color(0xFF00C896);
+  static const Color error    = Color(0xFFFF4D4D);
+  static const Color warning  = Color(0xFFFFB020);
+  static const Color info     = Color(0xFF3B82F6);
+
+  // Special
+  static const Color gold       = Color(0xFFFFD700);
+  static const Color goldLight  = Color(0xFFFFE566);
+
+  // Glass
+  static const Color glassDark    = Color(0x1AFFFFFF);
+  static const Color glassLight   = Color(0x80FFFFFF);
+  static const Color glassBorder  = Color(0x1AFFFFFF);
+  static const Color glassBorderLight = Color(0xFFE5E7EB);
 }
 
 class AppGradients {
   static const LinearGradient primary = LinearGradient(
-    colors: [Color(0xFF00C9A7), Color(0xFF00A886)],
+    colors: [Color(0xFF00C896), Color(0xFF00A87A)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
   static const LinearGradient darkBg = LinearGradient(
-    colors: [Color(0xFF0A0F0D), Color(0xFF111916), Color(0xFF0A0F0D)],
+    colors: [Color(0xFF0D0D0D), Color(0xFF141414)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+  static const LinearGradient lightBg = LinearGradient(
+    colors: [Color(0xFFF7F9F8), Color(0xFFEFF4F2)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
   static const LinearGradient card = LinearGradient(
-    colors: [Color(0xFF1A2E29), Color(0xFF162220)],
+    colors: [Color(0xFF242424), Color(0xFF1E1E1E)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -48,22 +73,22 @@ class AppGradients {
     end: Alignment.bottomRight,
   );
   static const RadialGradient glow = RadialGradient(
-    colors: [Color(0x3300C9A7), Color(0x0000C9A7)],
+    colors: [Color(0x3300C896), Color(0x0000C896)],
     radius: 1.0,
   );
 }
 
 class AppTextStyles {
   static const String fontFamily = 'Poppins';
-  static const TextStyle display = TextStyle(fontFamily: fontFamily, fontSize: 32, fontWeight: FontWeight.w700, letterSpacing: -0.5);
+  static const TextStyle display   = TextStyle(fontFamily: fontFamily, fontSize: 32, fontWeight: FontWeight.w700, letterSpacing: -0.5);
   static const TextStyle headline1 = TextStyle(fontFamily: fontFamily, fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.3);
   static const TextStyle headline2 = TextStyle(fontFamily: fontFamily, fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.2);
   static const TextStyle headline3 = TextStyle(fontFamily: fontFamily, fontSize: 18, fontWeight: FontWeight.w600);
-  static const TextStyle body1 = TextStyle(fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w400, height: 1.5);
-  static const TextStyle body2 = TextStyle(fontFamily: fontFamily, fontSize: 14, fontWeight: FontWeight.w400, height: 1.5);
-  static const TextStyle caption = TextStyle(fontFamily: fontFamily, fontSize: 12, fontWeight: FontWeight.w400);
-  static const TextStyle button = TextStyle(fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.3);
-  static const TextStyle label = TextStyle(fontFamily: fontFamily, fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5);
+  static const TextStyle body1     = TextStyle(fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w400, height: 1.5);
+  static const TextStyle body2     = TextStyle(fontFamily: fontFamily, fontSize: 14, fontWeight: FontWeight.w400, height: 1.5);
+  static const TextStyle caption   = TextStyle(fontFamily: fontFamily, fontSize: 12, fontWeight: FontWeight.w400);
+  static const TextStyle button    = TextStyle(fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.3);
+  static const TextStyle label     = TextStyle(fontFamily: fontFamily, fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5);
 }
 
 class AppRadius {
@@ -87,13 +112,16 @@ class AppSpacing {
 
 class AppShadows {
   static List<BoxShadow> card = [
+    BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 16, offset: const Offset(0, 4)),
+  ];
+  static List<BoxShadow> cardDark = [
     BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 8)),
   ];
   static List<BoxShadow> glow = [
-    BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 24, spreadRadius: 2),
+    BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 24, spreadRadius: 2),
   ];
   static List<BoxShadow> button = [
-    BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 6)),
+    BoxShadow(color: AppColors.primary.withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 6)),
   ];
 }
 
@@ -117,7 +145,11 @@ class AppTheme {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: TextStyle(fontFamily: AppTextStyles.fontFamily, fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textDarkPrimary),
+      titleTextStyle: TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 18, fontWeight: FontWeight.w600,
+        color: AppColors.textDarkPrimary,
+      ),
       iconTheme: IconThemeData(color: AppColors.textDarkPrimary),
     ),
     cardTheme: CardThemeData(
@@ -144,10 +176,22 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.cardDark,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: BorderSide.none),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: const BorderSide(color: AppColors.glassBorder, width: 1)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
-      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: const BorderSide(color: AppColors.error, width: 1)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: const BorderSide(color: Color(0xFF2A2A2A), width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: const BorderSide(color: AppColors.error, width: 1),
+      ),
       hintStyle: AppTextStyles.body2.copyWith(color: AppColors.textDarkSecondary),
       contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
     ),
@@ -157,8 +201,10 @@ class AppTheme {
       unselectedItemColor: AppColors.textDarkSecondary,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
+      selectedLabelStyle: TextStyle(fontFamily: AppTextStyles.fontFamily, fontSize: 11, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: TextStyle(fontFamily: AppTextStyles.fontFamily, fontSize: 11),
     ),
-    dividerTheme: const DividerThemeData(color: AppColors.glassBorder, thickness: 1),
+    dividerTheme: const DividerThemeData(color: Color(0xFF2A2A2A), thickness: 1),
     iconTheme: const IconThemeData(color: AppColors.textDarkSecondary, size: 22),
     textTheme: TextTheme(
       displayLarge:   AppTextStyles.display.copyWith(color: AppColors.textDarkPrimary),
@@ -192,7 +238,11 @@ class AppTheme {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: TextStyle(fontFamily: AppTextStyles.fontFamily, fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textLightPrimary),
+      titleTextStyle: TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 18, fontWeight: FontWeight.w600,
+        color: AppColors.textLightPrimary,
+      ),
       iconTheme: IconThemeData(color: AppColors.textLightPrimary),
     ),
     cardTheme: CardThemeData(
@@ -218,11 +268,23 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.bgLight2,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: BorderSide.none),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: const BorderSide(color: Color(0xFFDDEDE8), width: 1)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
-      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: const BorderSide(color: AppColors.error, width: 1)),
+      fillColor: AppColors.cardLight2,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: const BorderSide(color: AppColors.glassBorderLight, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: const BorderSide(color: AppColors.error, width: 1),
+      ),
       hintStyle: AppTextStyles.body2.copyWith(color: AppColors.textLightSecondary),
       contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
     ),
@@ -232,8 +294,10 @@ class AppTheme {
       unselectedItemColor: AppColors.textLightSecondary,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
+      selectedLabelStyle: TextStyle(fontFamily: AppTextStyles.fontFamily, fontSize: 11, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: TextStyle(fontFamily: AppTextStyles.fontFamily, fontSize: 11),
     ),
-    dividerTheme: const DividerThemeData(color: Color(0xFFDDEDE8), thickness: 1),
+    dividerTheme: const DividerThemeData(color: AppColors.glassBorderLight, thickness: 1),
     iconTheme: const IconThemeData(color: AppColors.textLightSecondary, size: 22),
     textTheme: TextTheme(
       displayLarge:   AppTextStyles.display.copyWith(color: AppColors.textLightPrimary),

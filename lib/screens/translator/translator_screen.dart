@@ -49,154 +49,146 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
   @override
   Widget build(BuildContext context) {
     final translationState = ref.watch(translationProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.bgDark : AppColors.bgLight;
+    final textPrimary = isDark ? AppColors.textDarkPrimary : AppColors.textLightPrimary;
+    final menuBg = isDark ? AppColors.cardDark : AppColors.cardLight;
+    final menuBorder = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
 
     return Scaffold(
-      backgroundColor: AppColors.bgDark,
+      backgroundColor: bgColor,
       bottomNavigationBar: const BottomNavBar(currentIndex: 0),
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppGradients.darkBg),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 40, height: 40,
+                    decoration: BoxDecoration(
+                      color: menuBg,
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
+                      border: Border.all(color: menuBorder),
+                    ),
+                    child: Icon(Icons.menu_rounded, color: textPrimary, size: 20),
+                  ),
+                  RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                        text: 'Lingua',
+                        style: TextStyle(
+                          fontFamily: 'Poppins', fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: textPrimary,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: 'AI',
+                        style: TextStyle(
+                          fontFamily: 'Poppins', fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ]),
+                  ),
+                  Text(String.fromCharCode(0x1F451), style: TextStyle(fontSize: 24)),
+                ],
+              ),
+            ),
+
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: Column(
                   children: [
-                    Container(
-                      width: 40, height: 40,
-                      decoration: BoxDecoration(
-                        color: AppColors.glassDark,
-                        borderRadius: BorderRadius.circular(AppRadius.sm),
-                        border: Border.all(color: AppColors.glassBorder),
-                      ),
-                      child: const Icon(Icons.menu_rounded,
-                          color: AppColors.textDarkPrimary, size: 20),
+                    const SizedBox(height: AppSpacing.sm),
+                    LanguageSelector(
+                      sourceLang: _sourceLang,
+                      targetLang: _targetLang,
+                      onSourceChanged: (l) => setState(() => _sourceLang = l),
+                      onTargetChanged: (l) => setState(() => _targetLang = l),
+                      onSwap: _swapLanguages,
                     ),
-                    RichText(
-                      text: const TextSpan(children: [
-                        TextSpan(
-                          text: 'Lingua',
-                          style: TextStyle(
-                            fontFamily: 'Poppins', fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textDarkPrimary,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'AI',
-                          style: TextStyle(
-                            fontFamily: 'Poppins', fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ]),
+                    const SizedBox(height: AppSpacing.md),
+                    InputCard(
+                      controller: _textController,
+                      sourceLang: _sourceLang,
+                      onTranslate: _translate,
+                      onVoice: () => context.go('/voice'),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        gradient: AppGradients.premium,
-                        borderRadius: BorderRadius.circular(AppRadius.full),
-                      ),
-                      child: const Row(children: [
-                        Icon(Icons.workspace_premium_rounded,
-                            color: Colors.black, size: 14),
-                        SizedBox(width: 4),
-                        Text('Pro', style: TextStyle(
-                          fontFamily: 'Poppins', fontSize: 11,
-                          fontWeight: FontWeight.w700, color: Colors.black,
-                        )),
-                      ]),
+                    const SizedBox(height: AppSpacing.sm),
+                    QuickActionsBar(
+                      selected: _selectedTone,
+                      onSelected: (tone) {
+                        setState(() => _selectedTone = tone);
+                        _translate();
+                      },
                     ),
+                    const SizedBox(height: AppSpacing.md),
+                    translationState.when(
+                      data: (translation) => translation != null
+                          ? OutputCard(translation: translation)
+                          : _buildEmptyOutput(isDark),
+                      loading: () => _buildLoadingOutput(isDark),
+                      error: (e, _) => _buildErrorOutput(e.toString()),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    if (translationState.value != null)
+                      AiEnhanceButtons(onTap: (action) {}),
+                    const SizedBox(height: AppSpacing.xl),
                   ],
                 ),
               ),
-
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: AppSpacing.sm),
-                      LanguageSelector(
-                        sourceLang: _sourceLang,
-                        targetLang: _targetLang,
-                        onSourceChanged: (l) => setState(() => _sourceLang = l),
-                        onTargetChanged: (l) => setState(() => _targetLang = l),
-                        onSwap: _swapLanguages,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      InputCard(
-                        controller: _textController,
-                        sourceLang: _sourceLang,
-                        onTranslate: _translate,
-                        onVoice: () => context.go('/voice'),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      QuickActionsBar(
-                        selected: _selectedTone,
-                        onSelected: (tone) {
-                          setState(() => _selectedTone = tone);
-                          _translate();
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      translationState.when(
-                        data: (translation) => translation != null
-                            ? OutputCard(translation: translation)
-                            : _buildEmptyOutput(),
-                        loading: () => _buildLoadingOutput(),
-                        error: (e, _) => _buildErrorOutput(e.toString()),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      if (translationState.value != null)
-                        AiEnhanceButtons(onTap: (action) {}),
-                      const SizedBox(height: AppSpacing.xl),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildEmptyOutput() {
+  Widget _buildEmptyOutput(bool isDark) {
+    final cardColor = isDark ? AppColors.cardDark : AppColors.cardLight;
+    final borderColor = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
+    final iconColor = isDark ? AppColors.textDarkSecondary : AppColors.textLightSecondary;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
+        color: cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.glassBorder),
+        border: Border.all(color: borderColor),
+        boxShadow: isDark ? [] : AppShadows.card,
       ),
       child: Column(children: [
-        Icon(Icons.translate_rounded,
-            color: AppColors.textDarkSecondary.withValues(alpha: 0.4), size: 40),
+        Icon(Icons.translate_rounded, color: iconColor.withValues(alpha: 0.4), size: 40),
         const SizedBox(height: 12),
         Text('Translation will appear here',
-            style: AppTextStyles.body2
-                .copyWith(color: AppColors.textDarkSecondary)),
+            style: AppTextStyles.body2.copyWith(color: iconColor)),
       ]),
     );
   }
 
-  Widget _buildLoadingOutput() {
+  Widget _buildLoadingOutput(bool isDark) {
+    final cardColor = isDark ? AppColors.cardDark : AppColors.cardLight;
+    final borderColor = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
+        color: cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.glassBorder),
+        border: Border.all(color: borderColor),
       ),
       child: const Center(
-        child: CircularProgressIndicator(
-            color: AppColors.primary, strokeWidth: 2),
+        child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2),
       ),
     );
   }
@@ -215,3 +207,5 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
     );
   }
 }
+
+
