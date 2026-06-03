@@ -1,5 +1,4 @@
-﻿
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/history_provider.dart';
@@ -32,7 +31,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     final user = ref.watch(authProvider).value;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       bottomNavigationBar: const BottomNavBar(currentIndex: 2),
       body: SafeArea(
         child: Column(
@@ -46,9 +45,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             ),
             Expanded(
               child: historyAsync.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF00C896)),
-                ),
+                loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF00C896))),
                 error: (e, _) => _buildErrorState(),
                 data: (items) {
                   final filtered = _filterItems(items);
@@ -64,6 +61,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   Widget _buildHeader(BuildContext context, String? userName) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
@@ -72,11 +70,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('History', style: TextStyle(
-                color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+              Text('History', style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 2),
-              Text('Your past translations', style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5), fontSize: 14)),
+              Text('Your past translations', style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 14)),
             ],
           ),
           _buildClearButton(),
@@ -103,30 +99,27 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   Widget _buildSearchBar() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         ),
         child: TextField(
           controller: _searchController,
-          style: const TextStyle(color: Colors.white, fontSize: 15),
+          style: TextStyle(color: colorScheme.onSurface, fontSize: 15),
           onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
           decoration: InputDecoration(
             hintText: 'Search translations...',
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 15),
-            prefixIcon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.4), size: 20),
+            hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.35), fontSize: 15),
+            prefixIcon: Icon(Icons.search, color: colorScheme.onSurface.withValues(alpha: 0.4), size: 20),
             suffixIcon: _searchQuery.isNotEmpty
                 ? IconButton(
-                    icon: Icon(Icons.close, color: Colors.white.withValues(alpha: 0.4), size: 18),
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() => _searchQuery = '');
-                    },
+                    icon: Icon(Icons.close, color: colorScheme.onSurface.withValues(alpha: 0.4), size: 18),
+                    onPressed: () { _searchController.clear(); setState(() => _searchQuery = ''); },
                   )
                 : null,
             border: InputBorder.none,
@@ -154,6 +147,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   Widget _buildEmptyState() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -161,17 +155,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           Container(
             width: 80, height: 80,
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
+              color: colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(24),
             ),
             child: const Icon(Icons.history_rounded, color: Color(0xFF00C896), size: 40),
           ),
           const SizedBox(height: 20),
-          const Text('No translations yet', style: TextStyle(
-            color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+          Text('No translations yet', style: TextStyle(color: colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           Text('Start translating to see your history here',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 14),
+            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.45), fontSize: 14),
             textAlign: TextAlign.center),
           const SizedBox(height: 28),
           ElevatedButton.icon(
@@ -191,14 +184,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   Widget _buildErrorState() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.error_outline, color: Colors.red.withValues(alpha: 0.7), size: 48),
           const SizedBox(height: 12),
-          Text('Something went wrong',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 16)),
+          Text('Something went wrong', style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 16)),
           const SizedBox(height: 12),
           TextButton(
             onPressed: () => ref.refresh(historyProvider),
@@ -244,9 +237,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   void _onItemTap(BuildContext context, dynamic item) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => _DetailSheet(item: item),
     );
   }
@@ -261,23 +253,21 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   void _showClearDialog(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: colorScheme.surfaceContainerHighest,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Clear History', style: TextStyle(color: Colors.white)),
+        title: Text('Clear History', style: TextStyle(color: colorScheme.onSurface)),
         content: Text('All translation history will be deleted. This cannot be undone.',
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.6))),
+          style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: Colors.white.withValues(alpha: 0.5)))),
+            child: Text('Cancel', style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5)))),
           TextButton(
-            onPressed: () {
-              ref.read(historyProvider.notifier).clearAll();
-              Navigator.pop(context);
-            },
+            onPressed: () { ref.read(historyProvider.notifier).clearAll(); Navigator.pop(context); },
             child: const Text('Clear', style: TextStyle(color: Colors.redAccent))),
         ],
       ),
@@ -291,6 +281,7 @@ class _DetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -301,7 +292,7 @@ class _DetailSheet extends StatelessWidget {
             child: Container(
               width: 36, height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: colorScheme.onSurface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(2)),
             ),
           ),
@@ -316,11 +307,9 @@ class _DetailSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Text(item.sourceText ?? '',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 14)),
+          Text(item.sourceText ?? '', style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14)),
           const SizedBox(height: 12),
-          Text(item.translatedText ?? '',
-            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+          Text(item.translatedText ?? '', style: TextStyle(color: colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w600)),
           const SizedBox(height: 24),
           Row(
             children: [
@@ -330,8 +319,8 @@ class _DetailSheet extends StatelessWidget {
                   icon: const Icon(Icons.copy, size: 16),
                   label: const Text('Copy'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                    foregroundColor: colorScheme.onSurface,
+                    side: BorderSide(color: colorScheme.onSurface.withValues(alpha: 0.2)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                 ),
               ),

@@ -47,86 +47,81 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final messages = ref.watch(chatProvider);
     final isLoading = ref.read(chatProvider.notifier).isLoading;
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (messages.isNotEmpty) _scrollToBottom();
 
     return Scaffold(
-      backgroundColor: AppColors.bgDark,
+      backgroundColor: colorScheme.surface,
       bottomNavigationBar: const BottomNavBar(currentIndex: 1),
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppGradients.darkBg),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/translator'),
-                      child: Container(
-                        width: 40, height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.glassDark,
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
-                          border: Border.all(color: AppColors.glassBorder),
-                        ),
-                        child: const Icon(Icons.arrow_back_rounded,
-                            color: AppColors.textDarkPrimary, size: 20),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text('AI Chat',
-                          style: AppTextStyles.headline3
-                              .copyWith(color: AppColors.textDarkPrimary)),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.go('/translator'),
+                    child: Container(
+                      width: 40, height: 40,
                       decoration: BoxDecoration(
-                        gradient: AppGradients.premium,
-                        borderRadius: BorderRadius.circular(AppRadius.full),
+                        color: colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
                       ),
-                      child: const Row(children: [
-                        Icon(Icons.workspace_premium_rounded, color: Colors.black, size: 14),
-                        SizedBox(width: 4),
-                        Text('Pro', style: TextStyle(
-                          fontFamily: 'Poppins', fontSize: 11,
-                          fontWeight: FontWeight.w700, color: Colors.black,
-                        )),
-                      ]),
+                      child: Icon(Icons.arrow_back_rounded, color: colorScheme.onSurface, size: 20),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text('AI Chat',
+                        style: AppTextStyles.headline3.copyWith(color: colorScheme.onSurface)),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      gradient: AppGradients.premium,
+                      borderRadius: BorderRadius.circular(AppRadius.full),
+                    ),
+                    child: const Row(children: [
+                      Icon(Icons.workspace_premium_rounded, color: Colors.black, size: 14),
+                      SizedBox(width: 4),
+                      Text('Pro', style: TextStyle(
+                        fontFamily: 'Poppins', fontSize: 11,
+                        fontWeight: FontWeight.w700, color: Colors.black,
+                      )),
+                    ]),
+                  ),
+                ],
               ),
-              Expanded(
-                child: messages.isEmpty
-                    ? _buildScenarioSelector()
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                        itemCount: messages.length + (isLoading ? 1 : 0),
-                        itemBuilder: (_, i) {
-                          if (i == messages.length) return const TypingIndicator();
-                          return ChatBubble(message: messages[i]);
-                        },
-                      ),
+            ),
+            Expanded(
+              child: messages.isEmpty
+                  ? _buildScenarioSelector()
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                      itemCount: messages.length + (isLoading ? 1 : 0),
+                      itemBuilder: (_, i) {
+                        if (i == messages.length) return const TypingIndicator();
+                        return ChatBubble(message: messages[i]);
+                      },
+                    ),
+            ),
+            if (messages.isNotEmpty)
+              ModeSelector(
+                selected: _selectedMode,
+                onSelected: (mode) => setState(() => _selectedMode = mode),
               ),
-              if (messages.isNotEmpty)
-                ModeSelector(
-                  selected: _selectedMode,
-                  onSelected: (mode) => setState(() => _selectedMode = mode),
-                ),
-              ChatInputBar(onSend: _sendMessage),
-            ],
-          ),
+            ChatInputBar(onSend: _sendMessage),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildScenarioSelector() {
+    final colorScheme = Theme.of(context).colorScheme;
     final scenarios = [
       (Icons.flight_rounded, 'Travel Companion', 'Get help while traveling'),
       (Icons.business_center_rounded, 'Business Assistant', 'Professional support'),
@@ -140,14 +135,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Hi, Umair 👋',
-              style: AppTextStyles.headline2.copyWith(color: AppColors.textDarkPrimary)),
+              style: AppTextStyles.headline2.copyWith(color: colorScheme.onSurface)),
           const SizedBox(height: 4),
           Text('How can I help you today?',
-              style: AppTextStyles.body2.copyWith(color: AppColors.textDarkSecondary)),
+              style: AppTextStyles.body2.copyWith(color: colorScheme.onSurface.withValues(alpha: 0.6))),
           const SizedBox(height: 24),
           Text('Popular Scenarios',
               style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textDarkSecondary, fontWeight: FontWeight.w600)),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6), fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
           ...scenarios.map((s) => _ScenarioCard(
                 icon: s.$1,
@@ -175,22 +170,22 @@ class _ScenarioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cardDark,
+          color: colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: AppColors.glassBorder),
         ),
         child: Row(
           children: [
             Container(
               width: 48, height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.15),
+                color: AppColors.primary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Icon(icon, color: AppColors.primary, size: 24),
@@ -201,14 +196,14 @@ class _ScenarioCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title, style: AppTextStyles.body1.copyWith(
-                      color: AppColors.textDarkPrimary, fontWeight: FontWeight.w600)),
+                      color: colorScheme.onSurface, fontWeight: FontWeight.w600)),
                   Text(subtitle, style: AppTextStyles.caption
-                      .copyWith(color: AppColors.textDarkSecondary)),
+                      .copyWith(color: colorScheme.onSurface.withValues(alpha: 0.6))),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded,
-                color: AppColors.textDarkSecondary, size: 16),
+            Icon(Icons.arrow_forward_ios_rounded,
+                color: colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
           ],
         ),
       ),

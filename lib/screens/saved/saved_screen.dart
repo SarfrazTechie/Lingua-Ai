@@ -1,5 +1,4 @@
-﻿
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
 
 class SavedScreen extends StatelessWidget {
@@ -7,8 +6,12 @@ class SavedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
+      backgroundColor: colorScheme.surface,
       bottomNavigationBar: const BottomNavBar(currentIndex: 3),
       body: SafeArea(
         child: Padding(
@@ -16,32 +19,54 @@ class SavedScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Saved', style: TextStyle(
-                color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+              Text(
+                'Saved',
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text('Your saved phrases', style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5), fontSize: 14)),
+              Text(
+                'Your saved phrases',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+              ),
               Expanded(
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 80, height: 80,
+                        width: 80,
+                        height: 80,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
+                          color: isDark
+                              ? const Color(0xFF1A1A1A)
+                              : colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(24),
                         ),
-                        child: const Icon(Icons.bookmark_border_rounded,
-                            color: Color(0xFF00C896), size: 40),
+                        child: const Icon(
+                          Icons.bookmark_border_rounded,
+                          color: Color(0xFF00C896),
+                          size: 40,
+                        ),
                       ),
                       const SizedBox(height: 20),
-                      const Text('No saved phrases yet', style: TextStyle(
-                        color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+                      Text(
+                        'No saved phrases yet',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       const SizedBox(height: 8),
-                      Text('Save translations to access them quickly',
-                        style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 14),
-                        textAlign: TextAlign.center),
+                      Text(
+                        'Save translations to access them quickly',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface.withValues(alpha: 0.45),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),
