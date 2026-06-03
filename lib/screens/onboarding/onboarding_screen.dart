@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import 'onboarding_page_1.dart';
@@ -22,11 +22,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      context.go('/home');
+      context.go('/login');
     }
   }
 
-  void _skip() => context.go('/home');
+  void _skip() => context.go('/login');
 
   @override
   void dispose() {
