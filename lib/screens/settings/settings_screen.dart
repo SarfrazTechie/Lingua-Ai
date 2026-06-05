@@ -463,8 +463,10 @@ class SettingsScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                 ),
-                onPressed: () {
-                  // TODO: save to Firestore via authProvider
+                onPressed: () async {
+                  final newName = controller.text.trim();
+                  if (newName.isEmpty) return;
+                  await ref.read(authProvider.notifier).updateName(newName);
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

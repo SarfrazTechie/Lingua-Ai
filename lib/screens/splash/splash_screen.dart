@@ -1,14 +1,16 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
+import '../../providers/auth_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _globeController;
   late AnimationController _fadeController;
@@ -48,9 +50,15 @@ class _SplashScreenState extends State<SplashScreen>
     await Future.delayed(const Duration(milliseconds: 300));
     _globeController.forward();
     _fadeController.forward();
-    // 4 seconds on splash screen
     await Future.delayed(const Duration(milliseconds: 4000));
-    if (mounted) context.go('/onboarding');
+    if (mounted) {
+      final user = ref.read(authProvider).valueOrNull;
+      if (user != null) {
+        context.go('/home');
+      } else {
+        context.go('/onboarding');
+      }
+    }
   }
 
   @override
@@ -74,7 +82,6 @@ class _SplashScreenState extends State<SplashScreen>
         ),
         child: Stack(
           children: [
-            // Glow background
             Center(
               child: AnimatedBuilder(
                 animation: _pulseAnim,
@@ -87,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen>
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.15),
+                          color: AppColors.primary.withValues(alpha: 0.15),
                           blurRadius: 120,
                           spreadRadius: 60,
                         ),
@@ -97,18 +104,13 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
             ),
-
-            // Floating bubbles
             ..._buildBubbles(size),
-
-            // Main content
             FadeTransition(
               opacity: _fadeAnim,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Globe
                     ScaleTransition(
                       scale: _scaleAnim,
                       child: Container(
@@ -130,10 +132,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 32),
-
-                    // App name
                     RichText(
                       text: const TextSpan(
                         children: [
@@ -158,7 +157,7 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                           ),
                           TextSpan(
-                            text: ' ✦',
+                            text: ' ?',
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 24,
@@ -168,9 +167,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
                     Text(
                       'AI Translator & Chat',
                       style: AppTextStyles.body1.copyWith(
@@ -178,21 +175,16 @@ class _SplashScreenState extends State<SplashScreen>
                         letterSpacing: 0.5,
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
                     Text(
                       'Break language barriers\nwith the power of AI',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textDarkSecondary.withOpacity(0.6),
+                        color: AppColors.textDarkSecondary.withValues(alpha: 0.6),
                         height: 1.6,
                       ),
                     ),
-
                     const SizedBox(height: 70),
-
-                    // Animated dots
                     AnimatedBuilder(
                       animation: _pulseAnim,
                       builder: (context, child) => Row(
@@ -206,7 +198,7 @@ class _SplashScreenState extends State<SplashScreen>
                             decoration: BoxDecoration(
                               color: i == 1
                                   ? AppColors.primary
-                                  : AppColors.primary.withOpacity(0.4),
+                                  : AppColors.primary.withValues(alpha: 0.4),
                               borderRadius: BorderRadius.circular(4),
                             ),
                           );
@@ -227,9 +219,9 @@ class _SplashScreenState extends State<SplashScreen>
     final bubbles = [
       ('Hello', 0.12, 0.12),
       ('Hola', 0.72, 0.18),
-      ('你好', 0.08, 0.72),
+      ('??', 0.08, 0.72),
       ('Bonjour', 0.65, 0.75),
-      ('مرحبا', 0.75, 0.45),
+      ('?????', 0.75, 0.45),
     ];
 
     return bubbles.map((b) {

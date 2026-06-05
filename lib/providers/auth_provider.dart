@@ -1,7 +1,7 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
-import '../services/auth_service.dart';
+import '../services/firebase/auth_service.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
@@ -80,6 +80,15 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
     }
   }
 
+  Future<void> updateName(String name) async {
+    final user = state.valueOrNull;
+    if (user == null) return;
+    try {
+      await _authService.updateUserName(user.uid, name);
+      state = AsyncValue.data(user.copyWith(name: name));
+    } catch (_) {}
+  }
+
   Future<void> signOut() async {
     await _authService.signOut();
     state = const AsyncValue.data(null);
@@ -89,4 +98,6 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
   bool get isPremium => state.value?.isPremium ?? false;
   UserModel? get user => state.value;
 }
+
+
 

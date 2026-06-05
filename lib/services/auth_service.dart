@@ -127,6 +127,10 @@ class AuthService {
     }
   }
 
+  Future<void> updateUserName(String uid, String name) async {
+    await _supabase.from('users').update({'name': name}).eq('uid', uid);
+  }
+
   Future<void> signOut() async {
     try { await _googleSignIn.signOut(); } catch (_) {}
     await _supabase.auth.signOut();
@@ -148,5 +152,6 @@ class AuthService {
     return 'Authentication failed. Please try again';
   }
 }
+
 
 

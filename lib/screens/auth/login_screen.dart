@@ -41,7 +41,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       await ref.read(authProvider.notifier).signInWithGoogle();
       final state = ref.read(authProvider);
       if (state.hasValue && state.value != null) {
-        if (mounted) context.go('/translator');
+        if (mounted) context.go('/home');
       }
     } catch (e) {
       if (mounted) {
@@ -54,7 +54,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Future<void> _handleGuest() async {
     await ref.read(authProvider.notifier).signInAsGuest();
-    if (mounted) context.go('/translator');
+    if (mounted) context.go('/home');
   }
 
   Future<void> _handleEmailSignIn() async {
@@ -69,7 +69,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     await ref.read(authProvider.notifier).signInWithEmail(email, password);
     final state = ref.read(authProvider);
     if (state.hasValue && state.value != null) {
-      if (mounted) context.go('/translator');
+      if (mounted) context.go('/home');
     } else if (state.hasError) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -333,3 +333,4 @@ class _SocialButton extends StatelessWidget {
     );
   }
 }
+
