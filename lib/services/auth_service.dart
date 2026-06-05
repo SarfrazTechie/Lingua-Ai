@@ -1,11 +1,14 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../../models/user_model.dart';
-import '../../core/errors/app_exception.dart';
+import '../models/user_model.dart';
+import '../core/errors/app_exception.dart';
 
 class AuthService {
   final _supabase = Supabase.instance.client;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId: '1055525036473-15je998co5au4jrjtjemi3k5rqpkd5q0.apps.googleusercontent.com',
+    forceCodeForRefreshToken: true,
+  );
 
   Future<UserModel?> getCurrentUser() async {
     try {
@@ -77,12 +80,18 @@ class AuthService {
 
   Future<UserModel> signInWithGoogle() async {
     try {
+      print('DEBUG: Starting Google Sign In');
       final googleUser = await _googleSignIn.signIn();
+      print('DEBUG: googleUser = $googleUser');
       if (googleUser == null) throw const AppException('Google sign in cancelled');
       final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+      print('DEBUG: idToken = $idToken');
+      if (idToken == null) throw const AppException('Google sign in failed: no ID token');
+      print('DEBUG: Calling Supabase signInWithIdToken');
       final response = await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
-        idToken: googleAuth.idToken!,
+        idToken: idToken,
         accessToken: googleAuth.accessToken,
       );
       return await getCurrentUser() ??
@@ -139,3 +148,5 @@ class AuthService {
     return 'Authentication failed. Please try again';
   }
 }
+
+

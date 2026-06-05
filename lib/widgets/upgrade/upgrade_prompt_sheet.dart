@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 
@@ -34,7 +34,7 @@ class UpgradePromptSheet extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           Container(
             width: 64, height: 64,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: AppGradients.premium,
             ),
@@ -70,7 +70,7 @@ class UpgradePromptSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.full),
                 ),
               ),
-              child: Text('Upgrade to Premium',
+              child: const Text('Upgrade to Premium',
                   style: AppTextStyles.button),
             ),
           ),

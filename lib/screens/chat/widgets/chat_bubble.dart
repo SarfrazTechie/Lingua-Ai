@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../app/theme.dart';
 import '../../../models/chat_message_model.dart';
 
@@ -19,7 +19,7 @@ class ChatBubble extends StatelessWidget {
           if (!isUser) ...[
             Container(
               width: 32, height: 32,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: AppGradients.primary,
               ),

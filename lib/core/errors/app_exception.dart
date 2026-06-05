@@ -9,8 +9,8 @@ class NetworkException extends AppException {
   const NetworkException([super.message = 'Network error occurred'])
       : super(code: 'network_error');
 }
-class AuthException extends AppException {
-  const AuthException([super.message = 'Authentication failed'])
+class AuthAppException extends AppException {
+  const AuthAppException([super.message = 'Authentication failed'])
       : super(code: 'auth_error');
 }
 class LimitExceededException extends AppException {

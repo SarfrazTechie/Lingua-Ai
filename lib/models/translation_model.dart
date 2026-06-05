@@ -1,5 +1,3 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
-
 class TranslationModel {
   final String? id;
   final String? sourceText;
@@ -19,27 +17,29 @@ class TranslationModel {
     this.isSaved,
   });
 
-  factory TranslationModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  factory TranslationModel.fromMap(Map<String, dynamic> data) {
     return TranslationModel(
-      id: doc.id,
-      sourceText: data['sourceText'] as String?,
-      translatedText: data['translatedText'] as String?,
-      sourceLang: data['sourceLang'] as String?,
-      targetLang: data['targetLang'] as String?,
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-      isSaved: data['isSaved'] as bool? ?? false,
+      id: data['id'] as String?,
+      sourceText: data['source_text'] as String?,
+      translatedText: data['translated_text'] as String?,
+      sourceLang: data['source_lang'] as String?,
+      targetLang: data['target_lang'] as String?,
+      createdAt: data['created_at'] != null
+          ? DateTime.parse(data['created_at'] as String)
+          : null,
+      isSaved: data['is_saved'] as bool? ?? false,
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toMap() {
     return {
-      'sourceText': sourceText,
-      'translatedText': translatedText,
-      'sourceLang': sourceLang,
-      'targetLang': targetLang,
-      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp(),
-      'isSaved': isSaved ?? false,
+      'source_text': sourceText,
+      'translated_text': translatedText,
+      'source_lang': sourceLang,
+      'target_lang': targetLang,
+      'created_at': createdAt?.toIso8601String() ??
+          DateTime.now().toIso8601String(),
+      'is_saved': isSaved ?? false,
     };
   }
 

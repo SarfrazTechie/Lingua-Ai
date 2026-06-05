@@ -1,34 +1,28 @@
-﻿abstract class Failure {
+abstract class Failure {
   final String message;
   const Failure(this.message);
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure([String message = 'No internet connection'])
-      : super(message);
+  const NetworkFailure([super.message = 'No internet connection']);
 }
 
 class AuthFailure extends Failure {
-  const AuthFailure([String message = 'Authentication failed'])
-      : super(message);
+  const AuthFailure([super.message = 'Authentication failed']);
 }
 
 class LimitFailure extends Failure {
-  const LimitFailure([String message = 'Daily AI limit reached'])
-      : super(message);
+  const LimitFailure([super.message = 'Daily AI limit reached']);
 }
 
 class TranslationFailure extends Failure {
-  const TranslationFailure([String message = 'Translation failed'])
-      : super(message);
+  const TranslationFailure([super.message = 'Translation failed']);
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure([String message = 'Server error'])
-      : super(message);
+  const ServerFailure([super.message = 'Server error']);
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure([String message = 'Cache error'])
-      : super(message);
+  const CacheFailure([super.message = 'Cache error']);
 }

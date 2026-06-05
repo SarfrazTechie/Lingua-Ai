@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -129,8 +129,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                           borderRadius: BorderRadius.circular(AppRadius.lg),
                           border: Border.all(color: AppColors.glassBorder),
                         ),
-                        child: Column(
-                          children: const [
+                        child: const Column(
+                          children: [
                             FeatureRow(label: 'Unlimited AI Chat', included: true),
                             FeatureRow(label: 'Voice & Camera Translation', included: true),
                             FeatureRow(label: 'Grammar Check', included: true),
@@ -160,7 +160,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                               borderRadius: BorderRadius.circular(AppRadius.full),
                             ),
                           ),
-                          child: Text('Start 7-Day Free Trial',
+                          child: const Text('Start 7-Day Free Trial',
                               style: AppTextStyles.button),
                         ),
                       ),

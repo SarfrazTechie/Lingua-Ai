@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -25,7 +25,7 @@ class SettingsScreen extends ConsumerWidget {
     final borderColor = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
 
     final authState = ref.watch(authProvider);
-    final user = authState.value;
+    final user = authState.valueOrNull;
     final themeMode = ref.watch(themeModeProvider);
     final isDarkMode = themeMode == ThemeMode.dark;
 
@@ -84,7 +84,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       child: user?.photoUrl != null
                           ? ClipOval(child: Image.network(user!.photoUrl!, fit: BoxFit.cover))
-                          : Icon(Icons.person_rounded, color: AppColors.primary, size: 30),
+                          : const Icon(Icons.person_rounded, color: AppColors.primary, size: 30),
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
@@ -200,7 +200,7 @@ class SettingsScreen extends ConsumerWidget {
                     trailing: Switch(
                       value: notificationsOn,
                       onChanged: (val) => ref.read(_notificationsProvider.notifier).state = val,
-                      activeColor: AppColors.primary,
+                      activeThumbColor: AppColors.primary,
                     ),
                   ),
                 ],
@@ -329,7 +329,7 @@ class SettingsScreen extends ConsumerWidget {
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                     )),
                   trailing: isSelected
-                      ? Icon(Icons.check_rounded, color: AppColors.primary, size: 20)
+                      ? const Icon(Icons.check_rounded, color: AppColors.primary, size: 20)
                       : null,
                   onTap: () {
                     ref.read(_languageProvider.notifier).state = lang;
@@ -382,7 +382,7 @@ class SettingsScreen extends ConsumerWidget {
                     fontWeight: opt == current ? FontWeight.w600 : FontWeight.normal,
                   )),
                 trailing: opt == current
-                    ? Icon(Icons.check_rounded, color: AppColors.primary, size: 20)
+                    ? const Icon(Icons.check_rounded, color: AppColors.primary, size: 20)
                     : null,
                 onTap: () {
                   ref.read(_speechProvider.notifier).state = opt;
@@ -448,7 +448,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppRadius.md),
-                  borderSide: BorderSide(color: AppColors.primary),
+                  borderSide: const BorderSide(color: AppColors.primary),
                 ),
               ),
             ),
@@ -467,8 +467,8 @@ class SettingsScreen extends ConsumerWidget {
                   // TODO: save to Firestore via authProvider
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text('Profile updated'),
+                    const SnackBar(
+                      content: Text('Profile updated'),
                       backgroundColor: AppColors.primary,
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -575,7 +575,7 @@ class SettingsScreen extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
         title: Row(
           children: [
-            Icon(Icons.translate_rounded, color: AppColors.primary, size: 24),
+            const Icon(Icons.translate_rounded, color: AppColors.primary, size: 24),
             const SizedBox(width: 8),
             Text('LinguaAI',
               style: AppTextStyles.headline3.copyWith(color: textPrimary)),

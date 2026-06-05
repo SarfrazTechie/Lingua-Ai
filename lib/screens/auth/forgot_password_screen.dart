@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 
@@ -153,7 +153,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                             borderRadius: BorderRadius.circular(AppRadius.full),
                           ),
                         ),
-                        child: Text('Send Reset Link',
+                        child: const Text('Send Reset Link',
                             style: AppTextStyles.button),
                       ),
                     ),
@@ -198,7 +198,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                             borderRadius: BorderRadius.circular(AppRadius.full),
                           ),
                         ),
-                        child: Text('Back to Login',
+                        child: const Text('Back to Login',
                             style: AppTextStyles.button),
                       ),
                     ),

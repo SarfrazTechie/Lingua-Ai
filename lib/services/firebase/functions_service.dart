@@ -1,8 +1,8 @@
-﻿import 'package:cloud_functions/cloud_functions.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/errors/app_exception.dart';
 
 class FunctionsService {
-  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+  final _supabase = Supabase.instance.client;
 
   Future<String> translate({
     required String text,
@@ -11,16 +11,21 @@ class FunctionsService {
     String? tone,
   }) async {
     try {
-      final callable = _functions.httpsCallable('translateText');
-      final result = await callable.call({
-        'text': text,
-        'sourceLang': sourceLang,
-        'targetLang': targetLang,
-        'tone': tone ?? 'neutral',
-      });
-      return result.data['translation'] as String? ?? '';
-    } on FirebaseFunctionsException catch (e) {
-      throw NetworkException(e.message ?? 'Translation failed');
+      final response = await _supabase.functions.invoke(
+        'translate-text',
+        body: {
+          'text': text,
+          'sourceLang': sourceLang,
+          'targetLang': targetLang,
+          'tone': tone ?? 'neutral',
+        },
+      );
+      if (response.status != 200) {
+        throw NetworkException('Translation failed: ${response.data}');
+      }
+      return response.data['translation'] as String? ?? '';
+    } on FunctionException catch (e) {
+      throw NetworkException(e.details?.toString() ?? 'Translation failed');
     } catch (e) {
       throw NetworkException('Translation failed: $e');
     }
@@ -32,15 +37,20 @@ class FunctionsService {
     String? mode,
   }) async {
     try {
-      final callable = _functions.httpsCallable('chatMessage');
-      final result = await callable.call({
-        'message': message,
-        'history': history,
-        'mode': mode ?? 'Travel Companion',
-      });
-      return result.data['reply'] as String? ?? '';
-    } on FirebaseFunctionsException catch (e) {
-      throw NetworkException(e.message ?? 'Chat failed');
+      final response = await _supabase.functions.invoke(
+        'chat-message',
+        body: {
+          'message': message,
+          'history': history,
+          'mode': mode ?? 'Travel Companion',
+        },
+      );
+      if (response.status != 200) {
+        throw NetworkException('Chat failed: ${response.data}');
+      }
+      return response.data['reply'] as String? ?? '';
+    } on FunctionException catch (e) {
+      throw NetworkException(e.details?.toString() ?? 'Chat failed');
     } catch (e) {
       throw NetworkException('Chat failed: $e');
     }

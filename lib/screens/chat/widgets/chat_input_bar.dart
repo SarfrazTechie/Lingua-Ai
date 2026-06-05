@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../app/theme.dart';
 
 class ChatInputBar extends StatefulWidget {
@@ -29,7 +29,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.bgDark2,
         border: Border(top: BorderSide(color: AppColors.glassBorder)),
       ),

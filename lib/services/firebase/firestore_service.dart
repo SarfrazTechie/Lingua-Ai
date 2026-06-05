@@ -1,5 +1,5 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/translation_model.dart';
 import '../../models/user_model.dart';
 import '../../models/chat_message_model.dart';
@@ -10,133 +10,152 @@ final firestoreServiceProvider = Provider<FirestoreService>((ref) {
 });
 
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final _db = Supabase.instance.client;
 
   // USER
   Future<void> createUser(UserModel user) async {
-    await _db.collection('users').doc(user.uid).set(user.toMap());
+    await _db.from('users').insert(user.toMap());
   }
 
   Future<UserModel?> getUser(String uid) async {
-    final doc = await _db.collection('users').doc(uid).get();
-    if (!doc.exists) return null;
-    final data = doc.data() as Map<String, dynamic>;
-    return UserModel.fromMap(data);
+    try {
+      final data = await _db
+          .from('users')
+          .select()
+          .eq('uid', uid)
+          .single();
+      return UserModel.fromMap(data);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> updateUser(UserModel user) async {
-    await _db.collection('users').doc(user.uid).update(user.toMap());
+    await _db
+        .from('users')
+        .update(user.toMap())
+        .eq('uid', user.uid);
   }
 
   // TRANSLATIONS
   Future<List<TranslationModel>> getTranslationHistory(String uid) async {
-    final snap = await _db
-        .collection('translations')
-        .doc(uid)
-        .collection('history')
-        .orderBy('createdAt', descending: true)
-        .limit(100)
-        .get();
-    return snap.docs.map((d) => TranslationModel.fromFirestore(d)).toList();
+    try {
+      final data = await _db
+          .from('translations')
+          .select()
+          .eq('uid', uid)
+          .order('created_at', ascending: false)
+          .limit(100);
+      return data.map((d) => TranslationModel.fromMap(d)).toList();
+    } catch (_) {
+      return [];
+    }
   }
 
   Future<void> saveTranslation(String uid, TranslationModel translation) async {
-    await _db
-        .collection('translations')
-        .doc(uid)
-        .collection('history')
-        .add(translation.toFirestore());
+    await _db.from('translations').insert({
+      ...translation.toMap(),
+      'uid': uid,
+    });
   }
 
   Future<void> deleteTranslation(String uid, String translationId) async {
     await _db
-        .collection('translations')
-        .doc(uid)
-        .collection('history')
-        .doc(translationId)
-        .delete();
+        .from('translations')
+        .delete()
+        .eq('id', translationId)
+        .eq('uid', uid);
   }
 
   Future<void> updateTranslation(String uid, TranslationModel translation) async {
     if (translation.id == null) return;
     await _db
-        .collection('translations')
-        .doc(uid)
-        .collection('history')
-        .doc(translation.id)
-        .update(translation.toFirestore());
+        .from('translations')
+        .update(translation.toMap())
+        .eq('id', translation.id!)
+        .eq('uid', uid);
   }
 
   Future<void> clearHistory(String uid) async {
-    final snap = await _db
-        .collection('translations')
-        .doc(uid)
-        .collection('history')
-        .get();
-    final batch = _db.batch();
-    for (final doc in snap.docs) {
-      batch.delete(doc.reference);
-    }
-    await batch.commit();
+    await _db
+        .from('translations')
+        .delete()
+        .eq('uid', uid);
   }
 
   // CHAT
   Future<void> saveChatMessage(String uid, String sessionId, ChatMessageModel message) async {
-    await _db
-        .collection('chats')
-        .doc(uid)
-        .collection('sessions')
-        .doc(sessionId)
-        .collection('messages')
-        .add(message.toMap());
+    await _db.from('chat_messages').insert({
+      ...message.toMap(),
+      'uid': uid,
+      'session_id': sessionId,
+    });
   }
 
   Future<List<ChatMessageModel>> getChatMessages(String uid, String sessionId) async {
-    final snap = await _db
-        .collection('chats')
-        .doc(uid)
-        .collection('sessions')
-        .doc(sessionId)
-        .collection('messages')
-        .orderBy('createdAt')
-        .get();
-    return snap.docs.map((d) => ChatMessageModel.fromMap(d.data())).toList();
+    final data = await _db
+        .from('chat_messages')
+        .select()
+        .eq('uid', uid)
+        .eq('session_id', sessionId)
+        .order('created_at', ascending: true);
+    return data.map((d) => ChatMessageModel.fromMap(d)).toList();
   }
 
   // USAGE
   Future<UsageModel?> getUsage(String uid, String date) async {
-    final doc = await _db
-        .collection('usage')
-        .doc(uid)
-        .collection('daily')
-        .doc(date)
-        .get();
-    if (!doc.exists) return null;
-    final data = doc.data() as Map<String, dynamic>;
-    return UsageModel.fromMap(data);
+    try {
+      final data = await _db
+          .from('usage')
+          .select()
+          .eq('uid', uid)
+          .eq('date', date)
+          .single();
+      return UsageModel.fromMap(data);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> incrementUsage(String uid, String date, int tokens) async {
-    final ref = _db
-        .collection('usage')
-        .doc(uid)
-        .collection('daily')
-        .doc(date);
-    await ref.set({
-      'messageCount': FieldValue.increment(1),
-      'tokenCount': FieldValue.increment(tokens),
-      'lastUpdated': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    final existing = await getUsage(uid, date);
+    if (existing == null) {
+      await _db.from('usage').insert({
+        'uid': uid,
+        'date': date,
+        'message_count': 1,
+        'token_count': tokens,
+        'last_updated': DateTime.now().toIso8601String(),
+      });
+    } else {
+      await _db.from('usage').update({
+        'message_count': existing.messageCount + 1,
+        'token_count': existing.tokenCount + tokens,
+        'last_updated': DateTime.now().toIso8601String(),
+      })
+      .eq('uid', uid)
+      .eq('date', date);
+    }
   }
 
   // PREMIUM
   Future<void> setPremiumStatus(String uid, bool isPremium) async {
-    await _db.collection('users').doc(uid).update({'isPremium': isPremium});
+    await _db
+        .from('users')
+        .update({'is_premium': isPremium})
+        .eq('uid', uid);
   }
 
   Future<bool> getPremiumStatus(String uid) async {
-    final doc = await _db.collection('users').doc(uid).get();
-    final data = doc.data() as Map<String, dynamic>?;
-      return (data?['isPremium'] as bool?) ?? false;
+    try {
+      final data = await _db
+          .from('users')
+          .select('is_premium')
+          .eq('uid', uid)
+          .single();
+      return (data['is_premium'] as bool?) ?? false;
+    } catch (_) {
+      return false;
+    }
   }
 }

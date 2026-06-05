@@ -10,39 +10,49 @@ final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<TranslationM
 class HistoryNotifier extends AsyncNotifier<List<TranslationModel>> {
   @override
   Future<List<TranslationModel>> build() async {
-    final userState = ref.watch(authProvider);
-    final user = userState.value;
+    final authState = ref.watch(authProvider);
+    final user = authState.valueOrNull;
+
+    // Guest user ya loading — empty list, koi error nahi
     if (user == null) return [];
-    final firestoreService = ref.read(firestoreServiceProvider);
-    return firestoreService.getTranslationHistory(user.uid);
+
+    try {
+      final service = ref.read(firestoreServiceProvider);
+      return await service.getTranslationHistory(user.uid);
+    } catch (_) {
+      return [];
+    }
   }
 
   Future<void> deleteItem(String id) async {
-    final user = ref.read(authProvider).value;
+    final user = ref.read(authProvider).valueOrNull;
     if (user == null) return;
-    final firestoreService = ref.read(firestoreServiceProvider);
-    await firestoreService.deleteTranslation(user.uid, id);
-    state = AsyncData(
-      state.value?.where((item) => item.id != id).toList() ?? [],
-    );
+    try {
+      await ref.read(firestoreServiceProvider).deleteTranslation(user.uid, id);
+      state = AsyncData(
+        state.value?.where((item) => item.id != id).toList() ?? [],
+      );
+    } catch (_) {}
   }
 
   Future<void> toggleSave(TranslationModel item) async {
-    final user = ref.read(authProvider).value;
+    final user = ref.read(authProvider).valueOrNull;
     if (user == null) return;
-    final firestoreService = ref.read(firestoreServiceProvider);
-    final updated = item.copyWith(isSaved: !(item.isSaved ?? false));
-    await firestoreService.updateTranslation(user.uid, updated);
-    state = AsyncData(
-      state.value?.map((t) => t.id == item.id ? updated : t).toList() ?? [],
-    );
+    try {
+      final updated = item.copyWith(isSaved: !(item.isSaved ?? false));
+      await ref.read(firestoreServiceProvider).updateTranslation(user.uid, updated);
+      state = AsyncData(
+        state.value?.map((t) => t.id == item.id ? updated : t).toList() ?? [],
+      );
+    } catch (_) {}
   }
 
   Future<void> clearAll() async {
-    final user = ref.read(authProvider).value;
+    final user = ref.read(authProvider).valueOrNull;
     if (user == null) return;
-    final firestoreService = ref.read(firestoreServiceProvider);
-    await firestoreService.clearHistory(user.uid);
-    state = const AsyncData([]);
+    try {
+      await ref.read(firestoreServiceProvider).clearHistory(user.uid);
+      state = const AsyncData([]);
+    } catch (_) {}
   }
 }

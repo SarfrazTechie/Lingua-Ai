@@ -1,14 +1,16 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
+import '../../providers/auth_provider.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
+class _RegisterScreenState extends ConsumerState<RegisterScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnim;
@@ -16,6 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -36,6 +39,31 @@ class _RegisterScreenState extends State<RegisterScreen>
     super.dispose();
   }
 
+  Future<void> _handleSignUp() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sab fields fill karo')),
+      );
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      await ref.read(authProvider.notifier).signUpWithEmail(name, email, password);
+      if (mounted) context.go('/translator');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,15 +79,12 @@ class _RegisterScreenState extends State<RegisterScreen>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 32),
-
-                  // Back button
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
                       onTap: () => context.go('/login'),
                       child: Container(
-                        width: 42,
-                        height: 42,
+                        width: 42, height: 42,
                         decoration: BoxDecoration(
                           color: AppColors.cardDark,
                           borderRadius: BorderRadius.circular(AppRadius.md),
@@ -70,13 +95,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 28),
-
-                  // Logo
                   Container(
-                    width: 72,
-                    height: 72,
+                    width: 72, height: 72,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: const LinearGradient(
@@ -89,43 +110,30 @@ class _RegisterScreenState extends State<RegisterScreen>
                     child: const Icon(Icons.language_rounded,
                         size: 36, color: Colors.black),
                   ),
-
                   const SizedBox(height: 24),
-
                   Text('Create Your Account',
                       style: AppTextStyles.headline1
                           .copyWith(color: AppColors.textDarkPrimary)),
-
                   const SizedBox(height: 8),
-
                   Text('Join LinguaAI and start your language journey.',
                       style: AppTextStyles.body2
                           .copyWith(color: AppColors.textDarkSecondary),
                       textAlign: TextAlign.center),
-
                   const SizedBox(height: 36),
-
-                  // Full Name
                   _buildTextField(
                     controller: _nameController,
                     hint: 'Enter your name',
                     label: 'Full Name',
                     icon: Icons.person_outline_rounded,
                   ),
-
                   const SizedBox(height: 14),
-
-                  // Email
                   _buildTextField(
                     controller: _emailController,
                     hint: 'Enter your email',
                     label: 'Email',
                     icon: Icons.email_outlined,
                   ),
-
                   const SizedBox(height: 14),
-
-                  // Password
                   _buildTextField(
                     controller: _passwordController,
                     hint: 'Create a password',
@@ -144,15 +152,12 @@ class _RegisterScreenState extends State<RegisterScreen>
                           setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
-
                   const SizedBox(height: 28),
-
-                  // Sign Up button
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () => context.go('/translator'),
+                      onPressed: _isLoading ? null : _handleSignUp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.black,
@@ -160,13 +165,12 @@ class _RegisterScreenState extends State<RegisterScreen>
                           borderRadius: BorderRadius.circular(AppRadius.full),
                         ),
                       ),
-                      child: Text('Sign Up', style: AppTextStyles.button),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.black)
+                          : const Text('Sign Up', style: AppTextStyles.button),
                     ),
                   ),
-
                   const SizedBox(height: 28),
-
-                  // Sign in link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -182,7 +186,6 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 32),
                 ],
               ),
@@ -218,14 +221,12 @@ class _RegisterScreenState extends State<RegisterScreen>
           child: TextField(
             controller: controller,
             obscureText: obscure,
-            style:
-                AppTextStyles.body2.copyWith(color: AppColors.textDarkPrimary),
+            style: AppTextStyles.body2.copyWith(color: AppColors.textDarkPrimary),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: AppTextStyles.body2
                   .copyWith(color: AppColors.textDarkSecondary),
-              prefixIcon:
-                  Icon(icon, color: AppColors.textDarkSecondary, size: 20),
+              prefixIcon: Icon(icon, color: AppColors.textDarkSecondary, size: 20),
               suffixIcon: suffix,
               border: InputBorder.none,
               contentPadding:

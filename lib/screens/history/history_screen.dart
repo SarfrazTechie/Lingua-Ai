@@ -28,7 +28,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(historyProvider);
-    final user = ref.watch(authProvider).value;
+    final authState = ref.watch(authProvider);
+    final user = authState.valueOrNull;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,

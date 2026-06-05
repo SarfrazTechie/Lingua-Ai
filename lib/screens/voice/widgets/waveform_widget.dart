@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../app/theme.dart';
 
 class WaveformWidget extends StatefulWidget {
@@ -36,14 +36,20 @@ class _WaveformWidgetState extends State<WaveformWidget>
         });
       }
     } else {
-      for (final c in _controllers) c.stop();
-      for (final c in _controllers) c.reset();
+      for (final c in _controllers) {
+        c.stop();
+      }
+      for (final c in _controllers) {
+        c.reset();
+      }
     }
   }
 
   @override
   void dispose() {
-    for (final c in _controllers) c.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
     super.dispose();
   }
 

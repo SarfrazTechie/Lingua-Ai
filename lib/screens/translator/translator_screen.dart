@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -97,7 +97,7 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
                       ),
                     ]),
                   ),
-                  Text(String.fromCharCode(0x1F451), style: TextStyle(fontSize: 24)),
+                  Text(String.fromCharCode(0x1F451), style: const TextStyle(fontSize: 24)),
                 ],
               ),
             ),

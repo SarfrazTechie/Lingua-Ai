@@ -21,20 +21,20 @@
         uid: map['uid'] ?? '',
         name: map['name'] ?? '',
         email: map['email'] ?? '',
-        photoUrl: map['photoUrl'],
-        preferredLanguage: map['preferredLanguage'] ?? 'en',
-        isPremium: map['isPremium'] ?? false,
-        createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
+        photoUrl: map['photo_url'],                                    // ← fix
+        preferredLanguage: map['preferred_language'] ?? 'en',         // ← fix
+        isPremium: map['is_premium'] ?? false,                        // ← fix
+        createdAt: DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now(), // ← fix
       );
 
   Map<String, dynamic> toMap() => {
         'uid': uid,
         'name': name,
         'email': email,
-        'photoUrl': photoUrl,
-        'preferredLanguage': preferredLanguage,
-        'isPremium': isPremium,
-        'createdAt': createdAt.toIso8601String(),
+        'photo_url': photoUrl,                   // ← fix
+        'preferred_language': preferredLanguage, // ← fix
+        'is_premium': isPremium,                 // ← fix
+        'created_at': createdAt.toIso8601String(), // ← fix
       };
 
   UserModel copyWith({

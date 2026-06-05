@@ -1,7 +1,6 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat_message_model.dart';
 import '../services/ai/chat_service.dart';
-import '../providers/translation_provider.dart';
 import '../providers/translation_provider.dart';
 
 final chatServiceProvider = Provider<ChatService>(

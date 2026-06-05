@@ -1,6 +1,7 @@
 ﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
-import '../services/firebase/auth_service.dart';
+import '../services/auth_service.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
@@ -11,7 +12,33 @@ final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<UserModel?>>
 class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
   final AuthService _authService;
 
-  AuthNotifier(this._authService) : super(const AsyncValue.data(null));
+  AuthNotifier(this._authService) : super(const AsyncValue.data(null)) {
+    _init();
+  }
+
+  void _init() {
+    // Pehle current user check karo
+    _loadCurrentUser();
+
+    // Phir auth state changes listen karo
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == AuthChangeEvent.signedIn) {
+        _loadCurrentUser();
+      } else if (event == AuthChangeEvent.signedOut) {
+        state = const AsyncValue.data(null);
+      }
+    });
+  }
+
+  Future<void> _loadCurrentUser() async {
+    try {
+      final user = await _authService.getCurrentUser();
+      state = AsyncValue.data(user); // null bhi ok hai
+    } catch (_) {
+      state = const AsyncValue.data(null); // koi bhi error = null user
+    }
+  }
 
   Future<void> signInWithEmail(String email, String password) async {
     state = const AsyncValue.loading();
@@ -62,3 +89,4 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
   bool get isPremium => state.value?.isPremium ?? false;
   UserModel? get user => state.value;
 }
+

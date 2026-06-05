@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../app/theme.dart';
 
 class TypingIndicator extends StatefulWidget {
@@ -34,7 +34,9 @@ class _TypingIndicatorState extends State<TypingIndicator>
 
   @override
   void dispose() {
-    for (final c in _controllers) c.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -46,7 +48,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
         children: [
           Container(
             width: 32, height: 32,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: AppGradients.primary,
             ),

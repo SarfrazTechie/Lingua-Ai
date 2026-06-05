@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import 'widgets/waveform_widget.dart';
@@ -185,7 +185,7 @@ class _VoiceScreenState extends State<VoiceScreen>
                     Switch(
                       value: true,
                       onChanged: (_) {},
-                      activeColor: AppColors.primary,
+                      activeThumbColor: AppColors.primary,
                     ),
                   ],
                 ),
@@ -205,7 +205,7 @@ class _VoiceScreenState extends State<VoiceScreen>
   Widget _buildBottomNav(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.bgDark2,
         border: Border(top: BorderSide(color: AppColors.glassBorder)),
       ),

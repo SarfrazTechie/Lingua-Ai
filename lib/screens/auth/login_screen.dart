@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -37,14 +37,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   Future<void> _handleGoogle() async {
-    await ref.read(authProvider.notifier).signInWithGoogle();
-    final state = ref.read(authProvider);
-    if (state.hasValue && state.value != null) {
-      if (mounted) context.go('/translator');
-    } else if (state.hasError) {
+    try {
+      await ref.read(authProvider.notifier).signInWithGoogle();
+      final state = ref.read(authProvider);
+      if (state.hasValue && state.value != null) {
+        if (mounted) context.go('/translator');
+      }
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.error.toString())),
+          SnackBar(content: Text(e.toString())),
         );
       }
     }
@@ -206,7 +208,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       ),
                       child: isLoading
                           ? const CircularProgressIndicator(color: Colors.black)
-                          : Text('Sign In', style: AppTextStyles.button),
+                          : const Text('Sign In', style: AppTextStyles.button),
                     ),
                   ),
                   const SizedBox(height: 20),

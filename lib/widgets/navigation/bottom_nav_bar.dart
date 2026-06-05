@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 
@@ -57,7 +57,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = AppColors.primary;
+    const activeColor = AppColors.primary;
     final inactiveColor = isDark ? AppColors.textDarkSecondary : AppColors.textLightSecondary;
 
     return GestureDetector(
