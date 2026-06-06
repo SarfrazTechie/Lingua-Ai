@@ -5,6 +5,7 @@ import '../../app/theme.dart';
 import '../../providers/chat_provider.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
 import 'widgets/chat_bubble.dart';
+import '../../providers/auth_provider.dart';
 import 'widgets/chat_input_bar.dart';
 import 'widgets/mode_selector.dart';
 import 'widgets/typing_indicator.dart';
@@ -122,6 +123,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Widget _buildScenarioSelector() {
     final colorScheme = Theme.of(context).colorScheme;
+    final user = ref.watch(authProvider).valueOrNull;
+    final userName = user?.name.split(' ').first ?? 'there';
     final scenarios = [
       (Icons.flight_rounded, 'Travel Companion', 'Get help while traveling'),
       (Icons.business_center_rounded, 'Business Assistant', 'Professional support'),
@@ -134,7 +137,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Hi, Umair 👋',
+          Text('Hi, $userName 👋',
               style: AppTextStyles.headline2.copyWith(color: colorScheme.onSurface)),
           const SizedBox(height: 4),
           Text('How can I help you today?',
