@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/theme.dart';
 import 'onboarding_page_1.dart';
 import 'onboarding_page_2.dart';
@@ -15,18 +16,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int _currentPage = 0;
 
-  void _next() {
+  void _next() async {
     if (_currentPage < 2) {
       _controller.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
     } else {
-      context.go('/login');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboarding_done', true);
+      if (mounted) context.go('/login');
     }
   }
 
-  void _skip() => context.go('/login');
+  void _skip() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboarding_done', true);
+    if (mounted) context.go('/login');
+  }
 
   @override
   void dispose() {
@@ -43,7 +50,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Skip button
               Align(
                 alignment: Alignment.topRight,
                 child: Padding(
@@ -56,8 +62,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-
-              // Pages
               Expanded(
                 child: PageView(
                   controller: _controller,
@@ -69,8 +73,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ],
                 ),
               ),
-
-              // Dots
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(3, (i) {
@@ -88,10 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   );
                 }),
               ),
-
               const SizedBox(height: 32),
-
-              // Next / Get Started button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: SizedBox(
@@ -120,7 +119,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 32),
             ],
           ),
@@ -129,4 +127,3 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 }
-

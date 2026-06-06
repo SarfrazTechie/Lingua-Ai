@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../models/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -52,9 +55,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _fadeController.forward();
     await Future.delayed(const Duration(milliseconds: 4000));
     if (mounted) {
-      final user = ref.read(authProvider).valueOrNull;
-      if (user != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final onboardingDone = prefs.getBool('onboarding_done') ?? false;
+      final supabaseUser = Supabase.instance.client.auth.currentUser;
+      if (supabaseUser != null) {
         context.go('/home');
+      } else if (onboardingDone) {
+        context.go('/login');
       } else {
         context.go('/onboarding');
       }
@@ -253,3 +260,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     }).toList();
   }
 }
+
+
+
+
+
+
+

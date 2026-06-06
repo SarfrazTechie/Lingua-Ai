@@ -12,6 +12,7 @@ import '../screens/history/history_screen.dart';
 import '../screens/subscription/subscription_screen.dart';
 import '../screens/saved/saved_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/profile/edit_profile_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -29,5 +30,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/subscription', name: 'subscription', builder: (context, state) => const SubscriptionScreen()),
     GoRoute(path: '/saved', name: 'saved', builder: (context, state) => const SavedScreen()),
     GoRoute(path: '/settings', name: 'settings', builder: (context, state) => const SettingsScreen()),
+    GoRoute(path: '/edit-profile', name: 'edit-profile', builder: (context, state) => const EditProfileScreen()),
   ],
 );
