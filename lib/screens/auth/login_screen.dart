@@ -67,15 +67,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       return;
     }
     await ref.read(authProvider.notifier).signInWithEmail(email, password);
-    final state = ref.read(authProvider);
-    if (state.hasValue && state.value != null) {
-      if (mounted) context.go('/home');
-    } else if (state.hasError) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.error.toString())),
-        );
+    final authState = ref.read(authProvider);
+    if (!mounted) return;
+    if (authState.hasValue && authState.value != null) {
+      context.go('/home');
+    } else if (authState.hasError) {
+      final err = authState.error.toString();
+      String message;
+      if (err.contains('Invalid email or password')) {
+        message = 'Galat email ya password hai.';
+      } else if (err.contains('No internet')) {
+        message = 'Internet connection check karo.';
+      } else {
+        message = 'Login failed. Please try again.';
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
     }
   }
 
