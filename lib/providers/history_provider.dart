@@ -2,6 +2,7 @@
 import '../models/translation_model.dart';
 import '../services/firebase/firestore_service.dart';
 import 'auth_provider.dart';
+import 'history_provider.dart';
 
 final historyProvider = AsyncNotifierProvider<HistoryNotifier, List<TranslationModel>>(
   HistoryNotifier.new,
