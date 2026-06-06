@@ -1,4 +1,4 @@
-﻿class UsageModel {
+class UsageModel {
   final String userId;
   final String date;
   final int messageCount;
@@ -14,20 +14,20 @@
   });
 
   factory UsageModel.fromMap(Map<String, dynamic> map) => UsageModel(
-        userId: map['userId'] ?? '',
+        userId: map['uid'] ?? '',
         date: map['date'] ?? '',
-        messageCount: map['messageCount'] ?? 0,
-        tokenCount: map['tokenCount'] ?? 0,
+        messageCount: map['message_count'] ?? 0,
+        tokenCount: map['token_count'] ?? 0,
         lastUpdated:
-            DateTime.tryParse(map['lastUpdated'] ?? '') ?? DateTime.now(),
+            DateTime.tryParse(map['last_updated'] ?? '') ?? DateTime.now(),
       );
 
   Map<String, dynamic> toMap() => {
-        'userId': userId,
+        'uid': userId,
         'date': date,
-        'messageCount': messageCount,
-        'tokenCount': tokenCount,
-        'lastUpdated': lastUpdated.toIso8601String(),
+        'message_count': messageCount,
+        'token_count': tokenCount,
+        'last_updated': lastUpdated.toIso8601String(),
       };
 
   UsageModel copyWith({int? messageCount, int? tokenCount}) => UsageModel(
@@ -38,3 +38,4 @@
         lastUpdated: DateTime.now(),
       );
 }
+

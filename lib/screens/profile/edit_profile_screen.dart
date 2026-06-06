@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -31,7 +31,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
   bool _notifTips          = true;
   bool _isSaving           = false;
 
-  // ── Same color helpers as settings_screen ──────────────────────
+  // -- Same color helpers as settings_screen ----------------------
   bool get _isDark    => Theme.of(context).brightness == Brightness.dark;
   Color get _bg       => _isDark ? AppColors.bgDark        : AppColors.bgLight;
   Color get _cardBg   => _isDark ? AppColors.cardDark      : AppColors.cardLight;
@@ -200,9 +200,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // TAB 1 — Personal Information + Membership
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
+  // TAB 1 � Personal Information + Membership
+  // ----------------------------------------------------------------
   Widget _personalTab() {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -252,9 +252,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // TAB 2 — Change Password + Sessions + 2FA
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
+  // TAB 2 � Change Password + Sessions + 2FA
+  // ----------------------------------------------------------------
   Widget _securityTab() {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -293,9 +293,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
           title: 'Active Sessions',
           icon: Icons.devices_rounded,
           children: [
-            _sessionRow('This Device',      'Android · Current',       true),
+            _sessionRow('This Device',      'Android � Current',       true),
             Divider(height: 1, color: _border),
-            _sessionRow('Chrome · Windows', 'Lahore, PK · 2 days ago', false),
+            _sessionRow('Chrome � Windows', 'Lahore, PK � 2 days ago', false),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
@@ -334,9 +334,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // TAB 3 — Notification toggles
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
+  // TAB 3 � Notification toggles
+  // ----------------------------------------------------------------
   Widget _notifsTab() {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -368,9 +368,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // TAB 4 — Danger Zone
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
+  // TAB 4 � Danger Zone
+  // ----------------------------------------------------------------
   Widget _dangerTab() {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -416,9 +416,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
   // REUSABLE WIDGETS
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
 
   Widget _card({
     required String title,
@@ -650,12 +650,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
   // ACTIONS
-  // ════════════════════════════════════════════════════════════════
+  // ----------------------------------------------------------------
   Future<void> _saveAll() async {
     setState(() => _isSaving = true);
-    await Future.delayed(const Duration(milliseconds: 700));
+    try {
+      final name = _nameCtrl.text.trim();
+      if (name.isNotEmpty) {
+        await ref.read(authProvider.notifier).updateName(name);
+      }
+    } catch (_) {}
     setState(() => _isSaving = false);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -713,3 +718,4 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 }
+

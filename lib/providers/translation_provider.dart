@@ -1,4 +1,4 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/translation_model.dart';
 import '../services/ai/translation_service.dart';
 import '../services/firebase/functions_service.dart';
@@ -9,8 +9,6 @@ import 'history_provider.dart';
 final functionsServiceProvider =
     Provider<FunctionsService>((ref) => FunctionsService());
 
-final firestoreServiceProvider =
-    Provider<FirestoreService>((ref) => FirestoreService());
 
 final translationServiceProvider = Provider<TranslationService>(
     (ref) => TranslationService(ref.read(functionsServiceProvider)));

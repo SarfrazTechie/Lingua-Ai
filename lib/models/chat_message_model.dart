@@ -1,4 +1,4 @@
-﻿enum MessageRole { user, assistant }
+enum MessageRole { user, assistant }
 
 class ChatMessageModel {
   final String id;
@@ -17,15 +17,16 @@ class ChatMessageModel {
         id: map['id'] ?? '',
         content: map['content'] ?? '',
         role: map['role'] == 'user' ? MessageRole.user : MessageRole.assistant,
-        createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
+        createdAt: DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now(),
       );
 
   Map<String, dynamic> toMap() => {
         'id': id,
         'content': content,
         'role': role.name,
-        'createdAt': createdAt.toIso8601String(),
+        'created_at': createdAt.toIso8601String(),
       };
 
   bool get isUser => role == MessageRole.user;
 }
+
