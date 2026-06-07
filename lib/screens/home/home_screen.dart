@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -22,7 +22,7 @@ class HomeScreen extends ConsumerWidget {
     final menuBg = isDark ? AppColors.cardDark : AppColors.cardLight;
 
     final authState = ref.watch(authProvider);
-    final user = authState.value;
+    final user = authState.valueOrNull;
     final userName = user == null
         ? 'Guest'
         : user.name.isNotEmpty
@@ -403,3 +403,5 @@ class _RecentItem extends StatelessWidget {
     );
   }
 }
+
+

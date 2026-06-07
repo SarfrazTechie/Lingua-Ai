@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/locale_provider.dart';
+import '../../providers/locale_provider.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
 
 // ─── Local Providers ───────────────────────────────────────────────
@@ -333,6 +335,8 @@ class SettingsScreen extends ConsumerWidget {
                       : null,
                   onTap: () {
                     ref.read(_languageProvider.notifier).state = lang;
+                    final _codes = {'English':'en','Urdu':'ur','Arabic':'ar','French':'fr','Spanish':'es','German':'de','Chinese':'zh','Japanese':'ja','Korean':'ko','Hindi':'hi','Turkish':'tr','Italian':'it','Portuguese':'pt','Russian':'ru'};
+                    ref.read(localeProvider.notifier).setLocale(Locale(_codes[lang] ?? 'en'));
                     Navigator.pop(context);
                   },
                 );
@@ -806,3 +810,5 @@ class _ThemeTile extends StatelessWidget {
     );
   }
 }
+
+
