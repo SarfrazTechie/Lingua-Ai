@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../../app/theme.dart';
 
@@ -9,47 +10,47 @@ class WaveformWidget extends StatefulWidget {
 }
 
 class _WaveformWidgetState extends State<WaveformWidget>
-    with TickerProviderStateMixin {
-  late List<AnimationController> _controllers;
-  late List<Animation<double>> _anims;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  final Random _random = Random();
+  late List<double> _heights;
 
   @override
   void initState() {
     super.initState();
-    _controllers = List.generate(20, (i) => AnimationController(
-          vsync: this,
-          duration: Duration(milliseconds: 300 + (i * 50)),
-        ));
-    _anims = _controllers.map((c) =>
-        Tween<double>(begin: 4, end: 40).animate(
-          CurvedAnimation(parent: c, curve: Curves.easeInOut),
-        )).toList();
+    _heights = List.generate(20, (_) => 4.0);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _controller.addListener(_updateHeights);
+  }
+
+  void _updateHeights() {
+    if (!mounted || !widget.isActive) return;
+    setState(() {
+      _heights = List.generate(20, (_) =>
+          4.0 + _random.nextDouble() * 36.0);
+    });
   }
 
   @override
   void didUpdateWidget(WaveformWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isActive) {
-      for (var i = 0; i < _controllers.length; i++) {
-        Future.delayed(Duration(milliseconds: i * 30), () {
-          if (mounted) _controllers[i].repeat(reverse: true);
-        });
-      }
-    } else {
-      for (final c in _controllers) {
-        c.stop();
-      }
-      for (final c in _controllers) {
-        c.reset();
-      }
+    if (widget.isActive && !oldWidget.isActive) {
+      _controller.repeat();
+    } else if (!widget.isActive && oldWidget.isActive) {
+      _controller.stop();
+      setState(() {
+        _heights = List.generate(20, (_) => 4.0);
+      });
     }
   }
 
   @override
   void dispose() {
-    for (final c in _controllers) {
-      c.dispose();
-    }
+    _controller.removeListener(_updateHeights);
+    _controller.dispose();
     super.dispose();
   }
 
@@ -58,19 +59,17 @@ class _WaveformWidgetState extends State<WaveformWidget>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: List.generate(_controllers.length, (i) {
-        return AnimatedBuilder(
-          animation: _anims[i],
-          builder: (_, __) => Container(
-            margin: const EdgeInsets.symmetric(horizontal: 2),
-            width: 4,
-            height: widget.isActive ? _anims[i].value : 4,
-            decoration: BoxDecoration(
-              color: widget.isActive
-                  ? AppColors.primary
-                  : AppColors.primary.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(2),
-            ),
+      children: List.generate(20, (i) {
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          width: 4,
+          height: _heights[i],
+          decoration: BoxDecoration(
+            color: widget.isActive
+                ? AppColors.primary
+                : AppColors.primary.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(2),
           ),
         );
       }),
