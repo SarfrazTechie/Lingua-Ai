@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -73,7 +74,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
             backgroundColor: _bg,
             elevation: 0,
             leading: GestureDetector(
-              onTap: () => context.pop(),
+              onTap: () => context.canPop() ? context.pop() : context.go('/settings'),
               child: Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -672,7 +673,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     ));
   }
 
-  void _changePassword() {
+  Future<void> _changePassword() async {
     if (_newPwCtrl.text != _confirmPwCtrl.text) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text('Passwords do not match'),
@@ -683,13 +684,43 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
       ));
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('Password updated'),
-      backgroundColor: AppColors.primary,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.md)),
-    ));
+    if (_newPwCtrl.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Password must be at least 6 characters'),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md)),
+      ));
+      return;
+    }
+    setState(() => _isSaving = true);
+    try {
+      await Supabase.instance.client.auth.updateUser(
+        UserAttributes(password: _newPwCtrl.text.trim()),
+      );
+      if (mounted) {
+        _currentPwCtrl.clear();
+        _newPwCtrl.clear();
+        _confirmPwCtrl.clear();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Password updated successfully'),
+          backgroundColor: AppColors.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md)),
+        ));
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Failed to update password. Please try again.'),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md)),
+      ));
+    }
+    setState(() => _isSaving = false);
   }
 
   void _confirmDelete() {
@@ -718,4 +749,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 }
+
+
 

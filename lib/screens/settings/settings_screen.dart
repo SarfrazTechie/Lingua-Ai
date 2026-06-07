@@ -220,7 +220,7 @@ class SettingsScreen extends ConsumerWidget {
                     icon: Icons.edit_rounded,
                     label: 'Edit Profile',
                     value: '',
-                    onTap: () => _showEditProfile(context, ref, user?.name ?? '', isDark, cardColor, borderColor, textPrimary, textSecondary),
+                    onTap: () => context.go('/edit-profile'),
                     textPrimary: textPrimary, textSecondary: textSecondary,
                   ),
                   Divider(height: 1, color: borderColor),
@@ -810,5 +810,6 @@ class _ThemeTile extends StatelessWidget {
     );
   }
 }
+
 
 
