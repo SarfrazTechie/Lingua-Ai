@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
@@ -398,7 +399,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
               const SizedBox(height: AppSpacing.md),
               _dangerRow('Sign Out All Devices',
                 'Remove access from all sessions',
-                Icons.logout_rounded, AppColors.warning, () {}),
+                Icons.logout_rounded, AppColors.warning, _signOutAllDevices),
               Divider(height: AppSpacing.lg,
                 color: AppColors.error.withValues(alpha: 0.15)),
               _dangerRow('Export My Data',
@@ -723,6 +724,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     setState(() => _isSaving = false);
   }
 
+  Future<void> _signOutAllDevices() async {
+    try {
+      await Supabase.instance.client.auth.signOut(scope: SignOutScope.global);
+      if (mounted) context.go('/login');
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Failed to sign out. Please try again.'),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md)),
+      ));
+    }
+  }
+
   void _confirmDelete() {
     showDialog(
       context: context,
@@ -741,7 +757,25 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
             child: Text('Cancel',
               style: AppTextStyles.body2.copyWith(color: AppColors.primary))),
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                final uid = Supabase.instance.client.auth.currentUser?.id;
+                if (uid != null) {
+                  await Supabase.instance.client.from('users').delete().eq('uid', uid);
+                }
+                await Supabase.instance.client.auth.signOut();
+                if (mounted) context.go('/login');
+              } catch (e) {
+                if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text('Failed to delete account.'),
+                  backgroundColor: AppColors.error,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md)),
+                ));
+              }
+            },
             child: Text('Delete',
               style: AppTextStyles.body2.copyWith(color: AppColors.error))),
         ],
@@ -749,6 +783,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     );
   }
 }
+
+
+
 
 
 
