@@ -25,6 +25,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   void initState() {
     super.initState();
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.passwordRecovery) {
+        if (mounted) context.go('/reset-password');
+      }
+    });
     _globeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1400),
@@ -260,6 +265,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     }).toList();
   }
 }
+
 
 
 
