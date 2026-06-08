@@ -80,15 +80,11 @@ class AuthService {
 
   Future<UserModel> signInWithGoogle() async {
     try {
-      print('DEBUG: Starting Google Sign In');
       final googleUser = await _googleSignIn.signIn();
-      print('DEBUG: googleUser = $googleUser');
       if (googleUser == null) throw const AppException('Google sign in cancelled');
       final googleAuth = await googleUser.authentication;
       final idToken = googleAuth.idToken;
-      print('DEBUG: idToken = $idToken');
       if (idToken == null) throw const AppException('Google sign in failed: no ID token');
-      print('DEBUG: Calling Supabase signInWithIdToken');
       final response = await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
