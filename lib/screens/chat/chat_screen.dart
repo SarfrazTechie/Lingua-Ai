@@ -39,6 +39,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _sendMessage(String text) {
+    if (ref.read(chatProvider.notifier).limitReached) {
+      context.go('/subscription');
+      return;
+    }
     if (text.trim().isEmpty) return;
     ref.read(chatProvider.notifier).sendMessage(text, mode: _selectedMode);
     _scrollToBottom();
