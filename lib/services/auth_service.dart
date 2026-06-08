@@ -101,7 +101,7 @@ class AuthService {
             createdAt: DateTime.now(),
           );
     } catch (e) {
-      throw AppException(e.toString());
+      throw AppException(_getAuthError(e.toString()));
     }
   }
 
@@ -116,7 +116,9 @@ class AuthService {
         isPremium: false,
         createdAt: DateTime.now(),
       );
-      await _supabase.from('users').upsert(userModel.toMap());
+      try {
+        await _supabase.from('users').upsert(userModel.toMap());
+      } catch (_) {}
       return userModel;
     } catch (e) {
       throw AppException(_getAuthError(e.toString()));

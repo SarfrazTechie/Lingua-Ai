@@ -54,7 +54,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Future<void> _handleGuest() async {
     await ref.read(authProvider.notifier).signInAsGuest();
-    if (mounted) context.go('/home');
+    final authState = ref.read(authProvider);
+    if (!mounted) return;
+    if (authState.hasValue && authState.value != null) {
+      context.go('/home');
+    } else if (authState.hasError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authState.error.toString())),
+      );
+    }
   }
 
   Future<void> _handleEmailSignIn() async {
