@@ -80,7 +80,8 @@ class AuthService {
 
   Future<UserModel> signInWithGoogle() async {
     try {
-      final googleUser = await _googleSignIn.signIn();
+      await _googleSignIn.signOut();
+final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) throw const AppException('Google sign in cancelled');
       final googleAuth = await googleUser.authentication;
       final idToken = googleAuth.idToken;

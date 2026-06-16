@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../providers/translation_provider.dart';
 import '../../widgets/navigation/bottom_nav_bar.dart';
+import '../../services/ai/image_translation_service.dart';
 import 'widgets/language_selector.dart';
 import 'widgets/input_card.dart';
 import 'widgets/output_card.dart';
@@ -18,13 +19,26 @@ class TranslatorScreen extends ConsumerStatefulWidget {
 
 class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
   final _textController = TextEditingController();
+  final _imageService = ImageTranslationService();
   String _sourceLang = 'en';
   String _targetLang = 'es';
   String _selectedTone = 'neutral';
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uri = GoRouterState.of(context).uri;
+      if (uri.queryParameters['openCamera'] == 'true') {
+        _handleCamera();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _textController.dispose();
+    _imageService.dispose();
     super.dispose();
   }
 
@@ -34,6 +48,14 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
       _sourceLang = _targetLang;
       _targetLang = temp;
     });
+  }
+
+  Future<void> _handleCamera() async {
+    final extractedText = await context.push<String>('/camera');
+    if (extractedText != null && extractedText.isNotEmpty && mounted) {
+      _textController.text = extractedText;
+      _translate();
+    }
   }
 
   void _translate() {
@@ -61,7 +83,6 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md, vertical: AppSpacing.sm),
@@ -97,11 +118,11 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
                       ),
                     ]),
                   ),
-                  Text(String.fromCharCode(0x1F451), style: const TextStyle(fontSize: 24)),
+                  Text(String.fromCharCode(0x1F451),
+                      style: const TextStyle(fontSize: 24)),
                 ],
               ),
             ),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -121,6 +142,8 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
                       sourceLang: _sourceLang,
                       onTranslate: _translate,
                       onVoice: () => context.go('/voice'),
+                      onCamera: _handleCamera,
+                      onGallery: () {},
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     QuickActionsBar(
@@ -154,8 +177,10 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
 
   Widget _buildEmptyOutput(bool isDark) {
     final cardColor = isDark ? AppColors.cardDark : AppColors.cardLight;
-    final borderColor = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
-    final iconColor = isDark ? AppColors.textDarkSecondary : AppColors.textLightSecondary;
+    final borderColor =
+        isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
+    final iconColor =
+        isDark ? AppColors.textDarkSecondary : AppColors.textLightSecondary;
 
     return Container(
       width: double.infinity,
@@ -167,7 +192,8 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
         boxShadow: isDark ? [] : AppShadows.card,
       ),
       child: Column(children: [
-        Icon(Icons.translate_rounded, color: iconColor.withValues(alpha: 0.4), size: 40),
+        Icon(Icons.translate_rounded,
+            color: iconColor.withValues(alpha: 0.4), size: 40),
         const SizedBox(height: 12),
         Text('Translation will appear here',
             style: AppTextStyles.body2.copyWith(color: iconColor)),
@@ -177,7 +203,8 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
 
   Widget _buildLoadingOutput(bool isDark) {
     final cardColor = isDark ? AppColors.cardDark : AppColors.cardLight;
-    final borderColor = isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
+    final borderColor =
+        isDark ? const Color(0xFF2A2A2A) : AppColors.glassBorderLight;
 
     return Container(
       width: double.infinity,
@@ -188,7 +215,8 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
         border: Border.all(color: borderColor),
       ),
       child: const Center(
-        child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2),
+        child: CircularProgressIndicator(
+            color: AppColors.primary, strokeWidth: 2),
       ),
     );
   }
@@ -207,5 +235,3 @@ class _TranslatorScreenState extends ConsumerState<TranslatorScreen> {
     );
   }
 }
-
-

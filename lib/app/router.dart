@@ -15,6 +15,7 @@ import '../screens/history/history_screen.dart';
 import '../screens/subscription/subscription_screen.dart';
 import '../screens/saved/saved_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/camera/camera_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 
 final _publicRoutes = ['/', '/onboarding', '/login', '/register', '/forgot-password', '/reset-password'];
@@ -44,6 +45,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/subscription', name: 'subscription', builder: (context, state) => const SubscriptionScreen()),
     GoRoute(path: '/saved', name: 'saved', builder: (context, state) => const SavedScreen()),
     GoRoute(path: '/settings', name: 'settings', builder: (context, state) => const SettingsScreen()),
+    GoRoute(path: '/camera', name: 'camera', builder: (context, state) => const CameraScreen()),
     GoRoute(path: '/edit-profile', name: 'edit-profile', builder: (context, state) => const EditProfileScreen()),
   ],
 );

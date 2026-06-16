@@ -48,3 +48,5 @@ app.*.map.json
 functions/.env.local
 android/app/google-services.json
 .vscode/launch.json
+
+.vscode/launch.json

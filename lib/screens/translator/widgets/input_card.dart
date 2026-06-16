@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../app/theme.dart';
 import '../../../core/constants/app_constants.dart';
 
@@ -7,6 +7,8 @@ class InputCard extends StatelessWidget {
   final String sourceLang;
   final VoidCallback onTranslate;
   final VoidCallback onVoice;
+  final VoidCallback onCamera;
+  final VoidCallback onGallery;
 
   const InputCard({
     super.key,
@@ -14,6 +16,8 @@ class InputCard extends StatelessWidget {
     required this.sourceLang,
     required this.onTranslate,
     required this.onVoice,
+    required this.onCamera,
+    required this.onGallery,
   });
 
   @override
@@ -68,7 +72,7 @@ class InputCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 _ActionIcon(icon: Icons.volume_up_rounded, onTap: () {}, bg: iconBg, color: iconColor),
                 const SizedBox(width: 8),
-                _ActionIcon(icon: Icons.camera_alt_rounded, onTap: () {}, bg: iconBg, color: iconColor),
+                _ActionIcon(icon: Icons.camera_alt_rounded, onTap: onCamera, bg: iconBg, color: iconColor),
                 const Spacer(),
                 GestureDetector(
                   onTap: onTranslate,

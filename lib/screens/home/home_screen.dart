@@ -135,7 +135,7 @@ class HomeScreen extends ConsumerWidget {
                   _QuickAction(icon: Icons.mic_rounded, label: 'Voice\nTranslation',
                     onTap: () => context.go('/voice'), isDark: isDark),
                   _QuickAction(icon: Icons.camera_alt_rounded, label: 'Camera\nTranslation',
-                    onTap: () {}, isDark: isDark),
+                    onTap: () => context.go('/translator?openCamera=true'), isDark: isDark),
                   _QuickAction(icon: Icons.forum_rounded, label: 'Conversation\nPractice',
                     onTap: () {}, isDark: isDark),
                   _QuickAction(icon: Icons.spellcheck_rounded, label: 'Grammar\nCheck',
@@ -403,5 +403,6 @@ class _RecentItem extends StatelessWidget {
     );
   }
 }
+
 
 
